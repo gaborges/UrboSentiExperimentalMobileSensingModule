@@ -1275,4 +1275,7 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
         return adaptationDAO;
     }
     
+    public synchronized int getEventsCount() {
+        return this.availableEvents.size();
+    }
 }

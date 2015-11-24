@@ -148,6 +148,9 @@
                 <state id="13" userCanChange="false" description="Interface de entrada socket disponível?">
                     <content dataType="7"></content>
                 </state>
+                <state id="14" userCanChange="false" description="Interface de entrada http disponível?">
+                    <content dataType="7"></content>
+                </state>
                 <!-- events -->
                 <event id="3" synchronous="false" implementation="1" description="Serviços Iniciados">
                     <target mandatory="true">2</target>
@@ -461,7 +464,7 @@
                     </parameter>
                     <parameter id="2" optional="true" dataType="10" label="reconnectionService" >
                         <description>Instância de serviço de reconexão</description>
-                         <possibleValues>
+                        <possibleValues>
                             <value>urbosenti.core.communication.ReconnectionService</value>
                         </possibleValues>
                     </parameter>
@@ -476,7 +479,7 @@
                     </parameter>
                     <parameter id="2" optional="true" dataType="10" label="reconnectionService" >
                         <description>Instância de serviço de reconexão</description>
-                         <possibleValues>
+                        <possibleValues>
                             <value>urbosenti.core.communication.ReconnectionService</value>
                         </possibleValues>
                     </parameter>
@@ -485,7 +488,7 @@
                     <target mandatory="true">2</target>
                     <parameter id="2" optional="false" dataType="10" label="reconnectionService" >
                         <description>Instância de serviço de reconexão</description>
-                         <possibleValues>
+                        <possibleValues>
                             <value>urbosenti.core.communication.ReconnectionService</value>
                         </possibleValues>
                     </parameter>
@@ -891,6 +894,7 @@
                             <state stateId="1" initialValue="false"></state>
                         </individualStates>
                     </instance>
+                    <instance id="3" description="HTTP"></instance>
                 </instances>
                 <!-- states -->
                 <state id="1" userCanChange="true" description="Estado de execução atual" instanceState="true">
@@ -1265,6 +1269,74 @@
         <component name="Location" class="urbosenti.location.LocationManager"></component>
         <component name="Resources" class="urbosenti.resouces.ResourceManager"></component>
         <component name="Concerns" class="urbosenti.concerns.ConcernManager"></component>
+        <component name="Test" class="urbosenti.test.TestManager">
+            <entity type="1" description="Entidade de teste">
+                <!-- events -->
+                <event id="1" synchronous="false" implementation="1" description="Evento Genérico">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="3" label="rules">
+                        <description>Quantidade de regras</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="conditions">
+                        <description>Quantidade de condições</description>
+                    </parameter>
+                </event>
+                <event id="2" synchronous="false" implementation="1" description="Iniciar interação">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="9" label="ip">
+                        <description>Ip do agente</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="port">
+                        <description>Porta do agente</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="3" label="rules">
+                        <description>Quantidade de regras</description>
+                    </parameter>
+                    <parameter id="4" optional="false" dataType="3" label="conditions">
+                        <description>Quantidade de condições</description>
+                    </parameter>
+                </event>
+                <event id="3" synchronous="false" implementation="1" description="Parar outro agente">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="9" label="ip">
+                        <description>Ip do agente</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="port">
+                        <description>Porta do agente</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="9" label="uid">
+                        <description>Uid do alvo</description>
+                    </parameter>
+                </event>
+                <event id="4" synchronous="false" implementation="1" description="Parar execução">
+                    <target mandatory="true">2</target>
+                </event>
+                <!-- actions -->
+                <action id="1"  description="Ação genérica">
+                    <parameter id="1" optional="false" dataType="10" label="event">
+                        <description>Evento que engatilhou</description>
+                        <possibleValues>
+                            <value>urbosenti.core.events.Event</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="2"  description="Ação de resposta da interação">
+                    <parameter id="1" optional="false" dataType="3" label="eventId">
+                        <description>Id o evento</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="4" label="timestampEvent">
+                        <description>Tempo do evento</description>
+                    </parameter>
+                    <parameter id="3" optional="true" dataType="9" label="ip">
+                        <description>Ip do agente</description>
+                    </parameter>
+                    <parameter id="4" optional="true" dataType="3" label="port">
+                        <description>Porta do agente</description>
+                    </parameter>
+                </action>
+                <action id="3" description="Ação de para parar execução"></action>
+            </entity>
+        </component>
     </device>
     <agentModels version="1.0">
         <agentModel acl="1" agentType="1">
@@ -1290,6 +1362,7 @@
                     <possibleValues>
                         <value>GCM</value>
                         <value>Socket</value>
+                        <value>HTTP</value>
                     </possibleValues>
                 </parameter>
                 <parameter id="3" optional="false" dataType="9" label="uid">
@@ -1391,6 +1464,7 @@
                     <possibleValues>
                         <value>GCM</value>
                         <value>Socket</value>
+                        <value>HTTP</value>
                     </possibleValues>
                 </parameter>
                 <parameter id="3" optional="false" dataType="9" label="address">
@@ -1405,6 +1479,41 @@
                 <parameter id="2" optional="false" dataType="9" label="report">
                     <description>Conteúdo capturado durante o intervalo</description>
                 </parameter>
+            </interaction>
+        </agentModel>
+        <agentModel acl="1" agentType="2">
+            <interaction id="11" type="1" direction="1" description="Interação para pedir resposta">
+                <communicativeAct>19</communicativeAct>
+                <parameter id="1" optional="false" dataType="3" label="eventId">
+                    <description>Id do evento</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="4" label="timestampEvent">
+                    <description>Tempo de evento</description>
+                </parameter>
+                <parameter id="3" optional="false" dataType="9" label="ip">
+                    <description>IP de quem fez a requisição</description>
+                </parameter>
+                <parameter id="4" optional="false" dataType="3" label="port">
+                    <description>porta</description>
+                </parameter>
+            </interaction>
+            <interaction id="12" type="2" direction="2" primaryInteraction="1" description="Interação Resposta da requisição">
+                <communicativeAct>8</communicativeAct>
+                <parameter id="1" optional="false" dataType="3" label="eventId">
+                    <description>Id do evento</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="4" label="timestampEvent">
+                    <description>Tempo de evento</description>
+                </parameter>
+                <parameter id="3" optional="true" dataType="9" label="ip">
+                    <description>IP de quem processou</description>
+                </parameter>
+                <parameter id="4" optional="true" dataType="3" label="port">
+                    <description>porta</description>
+                </parameter>
+            </interaction>
+            <interaction id="13" type="1" direction="1" description="Interação para desligar agente">
+                <communicativeAct>8</communicativeAct>
             </interaction>
         </agentModel>
     </agentModels>
