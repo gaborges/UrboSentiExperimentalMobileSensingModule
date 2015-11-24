@@ -1,0 +1,1411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UrboSentiDevice xmlns:xs="http://www.w3.org/2001/XMLSchema-instance"
+                 xs:noNamespaceSchemaLocation="deviceKnowledgeModelXSD.xsd">
+    <generalDefinitions version="1.0">
+        <agentTypes>
+            <agentType id="1">Backend System Service</agentType>
+        </agentTypes>
+        <serviceTypes>
+            <serviceType id="1">Backend Server</serviceType>
+        </serviceTypes>
+        <entityTypes>
+            <entityType id="1">function</entityType>
+            <entityType id="2">interface</entityType>
+            <entityType id="3">agent</entityType>
+        </entityTypes>
+        <dataTypes>
+            <dataType id="1" initialValue="0">byte</dataType>
+            <dataType id="2" initialValue="0">short</dataType>
+            <dataType id="3" initialValue="0">int</dataType>
+            <dataType id="4" initialValue="0">long</dataType>
+            <dataType id="5" initialValue="0.0">float</dataType>
+            <dataType id="6" initialValue="0.0">double</dataType>
+            <dataType id="7" initialValue="false">boolean</dataType>
+            <dataType id="8" initialValue="0">char</dataType>
+            <dataType id="9" initialValue="unknown">String</dataType>
+            <dataType id="10" initialValue="null">Object</dataType>
+        </dataTypes>
+        <implementationTypes>
+            <implementationType id="1">embedded in code</implementationType>
+            <implementationType id="2">standalone monitor</implementationType>
+        </implementationTypes>
+        <agentCommunicationLanguage id="1" description="FIPA">
+            <communicativeAct id="1">Accept Proposal</communicativeAct>
+            <communicativeAct id="2">Agree</communicativeAct>
+            <communicativeAct id="3">Cancel</communicativeAct>
+            <communicativeAct id="4">Call for Proposal</communicativeAct>
+            <communicativeAct id="5">Confirm</communicativeAct>
+            <communicativeAct id="6">Disconfirm</communicativeAct>
+            <communicativeAct id="7">Failure</communicativeAct>
+            <communicativeAct id="8">Inform</communicativeAct>
+            <communicativeAct id="9">Inform if</communicativeAct>
+            <communicativeAct id="10">Inform ref</communicativeAct>
+            <communicativeAct id="11">Not Underdstood</communicativeAct>
+            <communicativeAct id="12">Propagate</communicativeAct>
+            <communicativeAct id="13">Propose</communicativeAct>
+            <communicativeAct id="14">Proxy</communicativeAct>
+            <communicativeAct id="15">Query if</communicativeAct>
+            <communicativeAct id="16">Query ref</communicativeAct>
+            <communicativeAct id="17">Refuse</communicativeAct>
+            <communicativeAct id="18">Reject Proposal</communicativeAct>
+            <communicativeAct id="19">Request</communicativeAct>
+            <communicativeAct id="20">Request When</communicativeAct>
+            <communicativeAct id="21">Request Whenever</communicativeAct>
+            <communicativeAct id="22">Subscribe</communicativeAct>
+        </agentCommunicationLanguage>
+        <interactionType id="1">Primary</interactionType>
+        <interactionType id="2">Secondary</interactionType>
+        <interactionDirection id="1">Input</interactionDirection>
+        <interactionDirection id="2">Output</interactionDirection>
+        <targetOrigin id="1">Application</targetOrigin>
+        <targetOrigin id="2">System</targetOrigin>
+        <agentAddressType id="1">Local</agentAddressType>
+        <agentAddressType id="2">Remote</agentAddressType>
+        <service description="UrboSentiGeneralService" serviceType="1">
+            <!-- Pegar os uids dinâmicamente na descoberta, se não atribuído -->
+            <serviceUID>d428f2f7-ae09-4ecf-b57a-b3eaf2362d38</serviceUID> <!-- dinâmicamente na descoberta -->
+            <applicationUID>????</applicationUID> <!-- Idealmente dinâmico e deve ser maior que 6 caracteres -->
+            <address>http://ubicomp.inf.ufrgs.br/UrboSenti/webresources/backend</address>
+            <agent layer="2" type="1" address="/" addressType="2"></agent>
+        </service>
+    </generalDefinitions>
+    <device description="Device's Internal Representation" version="1.0">
+        <component name="Device" class="urbosenti.core.device.DeviceManager">
+            <entity type="1" description="Registro no Serviço Backend" >
+                <!-- states -->
+                <state id="1" userCanChange="false" description="Identificador Único do Serviço">
+                    <content dataType="9"></content>
+                </state>
+                <state id="2" userCanChange="false" description="Password Remoto">
+                    <content dataType="9"></content>
+                </state>
+                <state id="3" userCanChange="false" description="Identificador Único da Aplicação">
+                    <content dataType="9"></content>
+                </state>
+                <state id="4" userCanChange="false" description="Tempo para expiração em milisegundos">
+                    <content dataType="4" inferiorLimit="0"></content>
+                </state>
+                <!-- events -->
+                <event id="1" synchronous="false" implementation="1" description="Registro efetuado com sucesso">
+                    <target mandatory="true">1</target>
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="9" label="uid" state="3">
+                        <description>UID da Aplicação</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="4" label="expirationTime" state="4">
+                        <description>Tempo para expiração em milisegundos</description>
+                    </parameter>
+                </event>
+                <event id="2" synchronous="false" implementation="1" description="Erro ao registrar ao servidor">
+                    <target mandatory="true">1</target>
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="3" label="errorCode">
+                        <description>Código do Erro</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="9" label="description">
+                        <description>Descrição</description>
+                    </parameter>
+                </event>
+            </entity>
+            <entity type="1" description="Serviços UrboSenti" >
+                <!-- states -->
+                <state id="1" userCanChange="false" description="Serviços da UrboSenti estão ativos?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="2" userCanChange="false" description="Componente de Adaptação Habilitado?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="3" userCanChange="false" description="Componente de Localização Habilitado?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="4" userCanChange="false" description="Componente de Contexto Habilitado?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="5" userCanChange="false" description="Componente do Usuário Habilitado?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="6" userCanChange="false" description="Componente de Preocupações Habilitado?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="7" userCanChange="false" description="Componente de Recursos Habilitado?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="8" userCanChange="false" description="Interface cabeada disponível?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="9" userCanChange="false" description="Interface móvel via Wi-Fi disponível?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="10" userCanChange="false" description="Interface de dados móveis (2G,...) disponível?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="11" userCanChange="false" description="Interface de comunicação DTN disponível?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="12" userCanChange="false" description="Interface de entrada GCM disponível?">
+                    <content dataType="7"></content>
+                </state>
+                <state id="13" userCanChange="false" description="Interface de entrada socket disponível?">
+                    <content dataType="7"></content>
+                </state>
+                <!-- events -->
+                <event id="3" synchronous="false" implementation="1" description="Serviços Iniciados">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="true" dataType="7" label="serviceStatus" state="1">
+                        <description>Estado dos serviços</description>
+                        <possibleValues>
+                            <value>true</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="4" synchronous="false" implementation="1" description="Serviços Parados">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="true" dataType="7" label="serviceStatus" state="1">
+                        <description>Estado dos serviços</description>
+                        <possibleValues>
+                            <value>false</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- action -->
+                <action id="1"  description="Acordar um serviço">
+                    <parameter id="1" optional="false" dataType="3" label="componentId">
+                        <description>Componente</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="entityId">
+                        <description>Entidade</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="3" label="instanceId">
+                        <description>Instância</description>
+                    </parameter>
+                </action>
+                <action id="2"  description="Reiniciar um serviço">
+                    <parameter id="1" optional="false" dataType="3" label="componentId">
+                        <description>Componente</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="entityId">
+                        <description>Entidade</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="3" label="instanceId">
+                        <description>Instância</description>
+                    </parameter>
+                </action>
+                <action id="3"  description="Parar serviço">
+                    <parameter id="1" optional="false" dataType="3" label="componentId">
+                        <description>Componente</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="entityId">
+                        <description>Entidade</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="3" label="instanceId">
+                        <description>Instância</description>
+                    </parameter>
+                </action>
+            </entity>
+            <entity type="1" description="Informações Básicas do dispositivo" >
+                <!-- states -->
+                <state id="1" userCanChange="false" description="Espaço de Armazenamento (Bytes)">
+                    <content dataType="4"></content>
+                </state>
+                <state id="2" userCanChange="false" description="Núcleos no CPU (Central Processing Unity)">
+                    <content dataType="3" ></content>
+                </state>
+                <state id="3" userCanChange="false" description="Frequência dos núcleos do CPU">
+                    <content dataType="5"></content>
+                </state>
+                <state id="4" userCanChange="false" description="Modelo do CPU">
+                    <content dataType="9"></content>
+                </state>
+                <state id="5" userCanChange="false" description="Sistema Operacional Nativo">
+                    <content dataType="9"></content>
+                </state>
+                <state id="6" userCanChange="false" description="Memória RAM">
+                    <content dataType="4"></content>
+                </state>
+                <state id="7" userCanChange="false" description="Modelo do dispositivo (Smartphone)">
+                    <content dataType="9"></content>
+                </state>
+                <state id="8" userCanChange="false" description="Capacidade da Bateria">
+                    <content dataType="5"></content>
+                </state>
+                <!-- events -->
+                <event id="5" synchronous="false" implementation="1" description="Informações do dispositivo coletadas com sucesso">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="4" label="storage" state="1">
+                        <description>Espaço disponível de Armazenamento (B)</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="2" label="cores" state="2">
+                        <description>Núcleos no CPU </description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="5" label="clock" state="3">
+                        <description>Frequência por núcleos do CPU</description>
+                    </parameter>
+                    <parameter id="4" optional="false" dataType="9" label="cpuModel" state="4">
+                        <description>Modelo do CPU</description>
+                    </parameter>
+                    <parameter id="5" optional="false" dataType="9" label="nativeOS" state="5">
+                        <description>S.O. Nativo</description>
+                    </parameter>
+                    <parameter id="6" optional="false" dataType="4" label="RAM" state="6">
+                        <description>Memória RAM (B)</description>
+                    </parameter>
+                    <parameter id="7" optional="false" dataType="9" label="deviceModel" state="7">
+                        <description>Modelo de dispositivo</description>
+                    </parameter>
+                    <parameter id="8" optional="false" dataType="5" label="battery" state="8">
+                        <description>Capacidade da Bateria</description>
+                    </parameter>
+                </event>
+                <event id="6" synchronous="false" implementation="1" description="Não foi possível acessar as informações">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="3" label="errorCode">
+                        <description>Código do Erro</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="9" label="description">
+                        <description>Descrição</description>
+                    </parameter>
+                </event>
+            </entity>
+        </component>
+        <component name="Event" class="urbosenti.core.events.EventManager">
+            <entity type="1" description="Gatilhos de tempo dinâmicos" >
+                <!-- events -->
+                <event id="1" synchronous="false" implementation="1" description="Evento agendado">
+                    <target mandatory="false">1</target>
+                    <target mandatory="false">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="event">
+                        <description>Evento definido por quem agendou</description>
+                        <possibleValues>
+                            <value>urbosenti.core.events.Event</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="trigger">
+                        <description>Gatilho de tempo</description>
+                        <possibleValues>
+                            <value>urbosenti.core.events.timer.TriggerRequest</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- action -->
+                <action id="1"  description="Adicionar um gatilho temporal de evento">
+                    <parameter id="1" optional="false" dataType="10" label="event">
+                        <description>Evento</description>
+                        <possibleValues>
+                            <value>urbosenti.core.events.Event</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="4" label="time">
+                        <description>Intervalo de tempo em milisegundos</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="date">
+                        <description>Data do gatilho</description>
+                        <possibleValues>
+                            <value>java.util.Date</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="4" optional="false" dataType="3" label="method">
+                        <description>Modo de operação</description>
+                        <possibleValues superiorLimit="3" inferiorLimit="1">
+                            <value default="true">1</value>
+                            <value>2</value>
+                            <value>3</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="5" optional="false" dataType="10" label="handler">
+                        <description>Tratador do evento</description>
+                        <possibleValues>
+                            <value>urbosenti.core.events.ApplicationHandler</value>
+                            <value>urbosenti.core.events.SystemHandler</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="2"  description="Cancelar gatilho">
+                    <parameter id="1" optional="false" dataType="10" label="event">
+                        <description>Evento</description>
+                        <possibleValues>
+                            <value>urbosenti.core.events.Event</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="4" label="time">
+                        <description>Intervalo de tempo em milisegundos</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="date">
+                        <description>Data do gatilho</description>
+                        <possibleValues>
+                            <value>java.util.Date</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="4" optional="false" dataType="3" label="method">
+                        <description>Modo de operação</description>
+                        <possibleValues superiorLimit="3" inferiorLimit="1">
+                            <value default="true">1</value>
+                            <value>2</value>
+                            <value>3</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="5" optional="false" dataType="10" label="handler">
+                        <description>Tratador do evento</description>
+                        <possibleValues>
+                            <value>urbosenti.core.events.ApplicationHandler</value>
+                            <value>urbosenti.core.events.SystemHandler</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="3"  description="Ação síncrona para retorno">
+                    <parameter id="1" optional="false" dataType="10" label="sessionEvent">
+                        <description>Evento da sessão</description>
+                        <possibleValues>
+                            <value>urbosenti.core.events.Event</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="true" dataType="4" label="actionTimeout">
+                        <description>timeout para retorno do resultado da aplicação da ação em milisegundos</description>
+                        <possibleValues initialValue="500"></possibleValues>
+                    </parameter>
+                </action>
+            </entity>
+        </component>
+        <component name="Data" class="urbosenti.core.data.DataManager"></component>
+        <component name="Communication" class="urbosenti.core.communication.CommunicationManager">
+            <entity type="1" description="Armazenamento de Relatos" >
+                <!-- states -->
+                <state id="1" userCanChange="false" description="Quantidade de mensagens armazenadas">
+                    <content dataType="3" inferiorLimit="0"></content>
+                </state>
+                <state id="2" userCanChange="true" description="Quantidade limite de mensagens armazenadas">
+                    <content dataType="3" inferiorLimit="0" initialValue="100000"></content>
+                </state>
+                <state id="3" userCanChange="true" description="Tempo limite de uma mensagem em ms">
+                    <content dataType="3" inferiorLimit="0" initialValue="0"></content>
+                </state>
+                <state id="4" userCanChange="true" description="Política" instaceState="false">
+                    <content dataType="3">
+                        <possibleValues inferiorLimit="1" superiorLimit="4">
+                            <value>1</value>
+                            <value default="true">2</value>
+                            <value>3</value>
+                            <value>4</value>
+                        </possibleValues>
+                    </content>
+                </state>
+                <!-- events -->
+                <event id="10" synchronous="false" implementation="1" description="Mensagem Armazenada" state="1">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="messageWrapper">
+                        <description>Envelope da Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.MessageWrapper</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="11" synchronous="false" implementation="1" description="Mensagem Removida" state="1">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="messageWrapper">
+                        <description>Envelope da Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.MessageWrapper</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- actions -->
+                <action id="1"  description="Remover relato da fila de upload e do banco de dados">
+                    <parameter id="1" optional="false" dataType="3" label="reportId" state="1">
+                        <description>Id do Relato</description>
+                    </parameter>
+                </action>
+                <action id="2"  description="Alterar limite de relatos armazenados">
+                    <parameter id="1" optional="false" dataType="3" label="limit" state="2">
+                        <description>Nova quantidade limite</description>
+                    </parameter>
+                </action>
+                <action id="3"  description="Alterar tempo limite em ms">
+                    <parameter id="1" optional="false" dataType="3" label="limit" state="3">
+                        <description>Novo tempo limite ms</description>
+                    </parameter>
+                </action>
+                <action id="4"  description="Alterar política">
+                    <parameter id="1" optional="false" dataType="3" label="policy" state="4">
+                        <description>Nova política</description>
+                    </parameter>
+                </action>
+            </entity>
+            <entity type="3" description="Serviço de Reconexão" >
+                <!-- instances -->
+                <instances representativeClass="urbosenti.core.communication.ReconnectionService">
+                    <instance id="1" description="General service of reconnection"></instance>
+                </instances>
+                <!-- states -->
+                <state id="1" userCanChange="false" description="Intervalo de reconexão em ms" instanceState="true">
+                    <content dataType="4" inferiorLimit="1" initialValue="20000"></content>
+                </state>
+                <state id="2" userCanChange="false" description="Método de reconexão" instanceState="true">
+                    <content dataType="3" inferiorLimit="1" superiorLimit="2" initialValue="1">
+                        <value>1</value>
+                        <value>2</value>
+                    </content>
+                </state>
+                <state id="3" userCanChange="true" description="Política" instaceState="false">
+                    <content dataType="3" inferiorLimit="1" superiorLimit="2" initialValue="1">
+                        <value default="true">1</value>
+                        <value>2</value>
+                    </content>
+                </state>
+                <!-- events -->
+                <event id="8" synchronous="false" implementation="1" description="Conexão reestabelecida">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="interface">
+                        <description>Interface conectada</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.CommunicationInterface</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="true" dataType="10" label="reconnectionService" >
+                        <description>Instância de serviço de reconexão</description>
+                         <possibleValues>
+                            <value>urbosenti.core.communication.ReconnectionService</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="1" synchronous="false" implementation="1" description="Interface Desconectada">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="interface">
+                        <description>Interface desconectada</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.CommunicationInterface</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="true" dataType="10" label="reconnectionService" >
+                        <description>Instância de serviço de reconexão</description>
+                         <possibleValues>
+                            <value>urbosenti.core.communication.ReconnectionService</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="16" synchronous="false" implementation="1" description="Nova tentativa de reconexão">
+                    <target mandatory="true">2</target>
+                    <parameter id="2" optional="false" dataType="10" label="reconnectionService" >
+                        <description>Instância de serviço de reconexão</description>
+                         <possibleValues>
+                            <value>urbosenti.core.communication.ReconnectionService</value>
+                        </possibleValues>
+                    </parameter>
+                </event>                
+                <!-- actions -->
+                <action id="5"  description="Alterar intervalo de reconexão">
+                    <parameter id="1" optional="false" dataType="3" label="interval" state="1">
+                        <description>Nova intervalo de reconexão</description>
+                    </parameter>
+                    <parameter id="1" optional="false" dataType="3" label="instanceId">
+                        <description>Id modelo do serviço de reconexão</description>
+                    </parameter>
+                </action>
+                <action id="6"  description="Alterar método">
+                    <parameter id="1" optional="false" dataType="3" label="method" state="2">
+                        <description>Novo método</description>
+                    </parameter>
+                    <parameter id="1" optional="false" dataType="3" label="instanceId">
+                        <description>Id modelo do serviço de reconexão</description>
+                    </parameter>
+                </action>
+                <action id="7"  description="Alterar política">
+                    <parameter id="1" optional="false" dataType="3" label="policy" state="3">
+                        <description>Nova política</description>
+                    </parameter>
+                </action>
+            </entity>
+            <entity type="3" description="Serviço de Upload Periódico de Relatos" >
+                <!-- instances -->
+                <instances representativeClass="urbosenti.core.communication.UploadService">
+                    <instance id="1" description="Backend Upload Service">
+                        <state stateId="8" initialValue="1"></state>
+                    </instance>
+                </instances>
+                <!-- states -->
+                <state id="1" userCanChange="true" description="Número de mensagens para upload por ciclo" instanceState="true">
+                    <content dataType="3" inferiorLimit="1" initialValue="10"></content>
+                </state>
+                <state id="2" userCanChange="true" description="Intervalo entre uploads (em milissegundos)" instanceState="true">
+                    <content dataType="4" inferiorLimit="1" initialValue="100"></content>
+                </state>
+                <state id="3" userCanChange="false" description="Taxa de upload (inicial 100%)" instanceState="true">
+                    <content dataType="6" inferiorLimit="0.0" superiorLimit="1.0" initialValue="1.0"></content>
+                </state>
+                <state id="4" userCanChange="false" description="Executando?" instanceState="true">
+                    <content dataType="7" initialValue="false"></content>
+                </state>
+                <state id="5" userCanChange="false" description="Desconectado?" instanceState="false">
+                    <content dataType="7" initialValue="true"></content>
+                </state>
+                <state id="6" userCanChange="true" description="Política" instaceState="false">
+                    <content dataType="3" inferiorLimit="1" superiorLimit="4" initialValue="1">
+                        <value default="true">1</value>
+                        <value>2</value>
+                        <value>3</value>
+                        <value>4</value>
+                    </content>
+                </state>
+                <state id="7" userCanChange="false" description="Realizar upload?" instanceState="true">
+                    <content dataType="7" initialValue="true"></content>
+                </state>
+                <state id="8" userCanChange="false" description="Id do serviço relacionado" instanceState="true">
+                    <content dataType="3" initialValue="0"></content>
+                </state>
+                <state id="9" userCanChange="false" description="Registrado para receber taxas máximas de upload?" instanceState="true">
+                    <content dataType="7" initialValue="false"></content>
+                </state>
+                <!-- events -->
+                <event id="9" synchronous="false" implementation="1" description="Relato esperando Aprovação">
+                    <target mandatory="true">1</target>
+                    <parameter id="1" optional="false" dataType="10" label="message">
+                        <description>Interface desconectada</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Message</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="1" synchronous="false" implementation="1" description="Interface Desconectada">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="interface">
+                        <description>Interface desconectada</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.CommunicationInterface</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="7" synchronous="false" implementation="1" description="Desconexão geral">
+                    <target mandatory="true">2</target>
+                </event>
+                <event id="6" synchronous="false" implementation="1" description="Endereço não acessível">
+                    <target mandatory="false">1</target>
+                    <target mandatory="false">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="messageWrapper">
+                        <description>Envelope da Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.MessageWrapper</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="interface">
+                        <description>Interface</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.CommunicationInterface</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="target">
+                        <description>Destinatário</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>                    
+                    <parameter id="4" optional="true" dataType="3" label="uploadServiceId">
+                        <description>id do serviço de upload</description>
+                    </parameter>
+                </event>
+                <event id="3" synchronous="false" implementation="1" description="Mensagem não entregue">
+                    <target mandatory="true">1</target>
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="messageWrapper">
+                        <description>Envelope da Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.MessageWrapper</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="target">
+                        <description>Destinatário</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>             
+                    <parameter id="4" optional="true" dataType="3" label="uploadServiceId">
+                        <description>id do serviço de upload</description>
+                    </parameter>
+                </event>
+                <event id="2" synchronous="false" implementation="1" description="Mensagem Entregue">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="messageWrapper">
+                        <description>Envelope da Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.MessageWrapper</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="interface">
+                        <description>Interface</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.CommunicationInterface</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="target">
+                        <description>Destinatário</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="4" optional="true" dataType="3" label="uploadServiceId">
+                        <description>id do serviço de upload</description>
+                    </parameter>
+                </event>
+                <event id="17" synchronous="false" implementation="1" description="Novo início do loop de serviço de upload">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="3" label="uploadServiceId">
+                        <description>id do serviço de upload</description>
+                    </parameter>
+                </event>
+                <!-- actions -->
+                <action id="8"  description="Alterar política">
+                    <parameter id="1" optional="false" dataType="3" label="policy" state="6">
+                        <description>Nova política</description>
+                    </parameter>
+                </action>
+                <action id="9"  description="Alterar taxa de upload">
+                    <parameter id="1" optional="false" dataType="6" label="uploadRate" state="3">
+                        <description>Nova Taxa</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="instanceId" >
+                        <description>Id da instância de serviço de upload</description>
+                    </parameter>
+                </action>
+                <action id="10"  description="Alterar tempo do intervalo entre ciclos de upload">
+                    <parameter id="1" optional="false" dataType="3" label="interval" state="2">
+                        <description>Novo Intervalo</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="instanceId">
+                        <description>Id da instância de serviço de upload</description>
+                    </parameter>
+                </action>
+                <action id="11"  description="Alterar quantidade de relatos enviados simultaneamente por ciclo">
+                    <parameter id="1" optional="false" dataType="3" label="quantity" state="1">
+                        <description>Nova quantidade</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="instanceId">
+                        <description>Id da instância de serviço de upload</description>
+                    </parameter>
+                </action>
+                <action id="25"  description="Permitir realizar upload">
+                    <parameter id="1" optional="false" dataType="3" label="instanceId">
+                        <description>Id da instância de serviço de upload</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="7" label="value" state="7">
+                        <description>Novo valor</description>
+                    </parameter>
+                </action>
+                <action id="26"  description="Registrado para receber taxas máximas de upload">
+                    <parameter id="1" optional="false" dataType="3" label="instanceId" >
+                        <description>Id da instância de serviço de upload</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="7" label="value" state="9">
+                        <description>Novo valor</description>
+                    </parameter>
+                </action>
+            </entity>
+            <entity type="1" description="Envio de Mensagens" >
+                <!-- no states -->
+                <!-- events -->
+                <event id="1" synchronous="false" implementation="1" description="Interface Desconectada">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="interface">
+                        <description>Interface desconectada</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.CommunicationInterface</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="7" synchronous="false" implementation="1" description="Desconexão geral">
+                    <target mandatory="true">2</target>
+                </event>
+                <event id="6" synchronous="false" implementation="1" description="Endereço não acessível">
+                    <target mandatory="false">1</target>
+                    <target mandatory="false">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="messageWrapper">
+                        <description>Envelope da Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.MessageWrapper</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="interface">
+                        <description>Interface</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.CommunicationInterface</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="target">
+                        <description>Destinatário</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="3" synchronous="false" implementation="1" description="Mensagem não entregue">
+                    <target mandatory="true">1</target>
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="messageWrapper">
+                        <description>Envelope da Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.MessageWrapper</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="target">
+                        <description>Destinatário</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="2" synchronous="false" implementation="1" description="Mensagem Entregue">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="messageWrapper">
+                        <description>Envelope da Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.MessageWrapper</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="interface">
+                        <description>Interface</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.CommunicationInterface</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="target">
+                        <description>Destinatário</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- actions -->
+                <action id="22"  description="Enviar mensagem síncrona">
+                    <parameter id="1" optional="false" dataType="10" label="message">
+                        <description>Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Message</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="target">
+                        <description>Endereço de destino</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Message</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="23"  description="Enviar mensagem assíncrona">
+                    <parameter id="1" optional="false" dataType="10" label="message">
+                        <description>Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Message</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="target">
+                        <description>Endereço de destino</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Message</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+            </entity>
+            <entity type="1" description="Uso de dados móveis" >
+                <!-- states - Não implementado -->
+                <!-- events - Não implementado -->
+                <!-- actions - Não implementado -->
+            </entity>
+            <entity type="2" description="Interfaces de Comunicação para saída" >
+                <!-- states -->
+                <instances representativeClass="urbosenti.core.communication.CommunicationInterface">
+                    <instance id="1" description="Wired - Cabeada">
+                        <state stateId="1" initialValue="0"></state>
+                        <state stateId="2" initialValue="false"></state>
+                        <state stateId="3" initialValue="0"></state>
+                    </instance>
+                    <instance id="2" description="Móvel via Wi-Fi">
+                        <state stateId="1" initialValue="1"></state>
+                        <state stateId="2" initialValue="false"></state>
+                    </instance>
+                    <instance id="3" description="Móvel via rede de dados móveis">
+                        <state stateId="1" initialValue="2"></state>
+                        <state stateId="2" initialValue="false"></state>
+                    </instance>
+                    <instance id="4" description="DTN via Bluetooh">
+                        <state stateId="1" initialValue="3"></state>
+                        <state stateId="2" initialValue="false"></state>
+                    </instance>
+                </instances>
+                <!-- states -->
+                <state id="1" userCanChange="true" description="Ordem da interface" instanceState="true">
+                    <content dataType="3" inferiorLimit="0"></content>
+                </state>
+                <state id="2" userCanChange="true" description="Habilitada?" instanceState="true">
+                    <content dataType="7" initialValue="true"></content>
+                </state>
+                <state id="3" userCanChange="false" description="Timeout em ms" instanceState="true">
+                    <content dataType="4" initialValue="20000" inferiorLimit="1"></content>
+                </state>
+                <!-- events - Eventos estão embutidos nas funções -->
+                <!-- actions -->
+                <action id="15"  description="Desabilitar interface">
+                    <parameter id="1" optional="false" dataType="3" label="interface">
+                        <description>Interface</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="7" label="status" state="2">
+                        <description>Condição</description>
+                        <possibleValues>
+                            <value default="true">false</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="16"  description="Habilitar interface">
+                    <parameter id="1" optional="false" dataType="3" label="interface">
+                        <description>Interface</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="7" label="status" state="2">
+                        <description>Condição</description>
+                        <possibleValues>
+                            <value default="true">true</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="17"  description="Definir interface como atual">
+                    <parameter id="1" optional="false" dataType="3" label="interface">
+                        <description>Interface</description>
+                    </parameter>
+                </action>
+                <action id="18"  description="Alterar ordem da interface">
+                    <parameter id="1" optional="false" dataType="3" label="interface">
+                        <description>Interface</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="position" state="1">
+                        <description>Nova ordem/posição</description>
+                    </parameter>
+                </action>
+                <action id="19"  description="Alterar timeout">
+                    <parameter id="1" optional="false" dataType="3" label="interface">
+                        <description>Interface</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="4" label="timeout" state="3">
+                        <description>Novo timeout em ms</description>
+                    </parameter>
+                </action>
+            </entity>
+            <entity type="2" description="Interfaces de Comunicação para entrada" >
+                <!-- instances -->
+                <instances representativeClass="urbosenti.core.communication.PushServiceReceiver">
+                    <instance id="1" description="Socket"></instance>
+                    <instance id="2" description="GCM">
+                        <individualStates>
+                            <state stateId="1" initialValue="false"></state>
+                        </individualStates>
+                    </instance>
+                </instances>
+                <!-- states -->
+                <state id="1" userCanChange="true" description="Estado de execução atual" instanceState="true">
+                    <content dataType="7" initialValue="0" superiorLimit="1" inferiorLimit="0"></content>
+                </state>
+                <state id="2" userCanChange="false" description="Configurações de endereço" instanceState="true">
+                    <content dataType="10">
+                        <value>java.util.HashMap</value>
+                    </content>
+                </state>
+                <!-- events -->
+                <event id="4" synchronous="false" implementation="1" description="Mensagem recebida">
+                    <target mandatory="false">1</target>
+                    <target mandatory="false">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="sender">
+                        <description>Origem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="message">
+                        <description>Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Message</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="5" synchronous="false" implementation="1" description="Mensagem recebida em formato inválido">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="sender">
+                        <description>Origem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="9" label="message">
+                        <description>Mensagem</description>
+                    </parameter>
+                </event>
+                <event id="15" synchronous="false" implementation="1" description="Nova configuração de endereço de entrada">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="interface">
+                        <description>Origem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.PushServiceReceiver</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="configurations">
+                        <description>Informações de endereço</description>
+                        <possibleValues>
+                            <value>java.util.HashMap</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- actions -->
+                <action id="20"  description="Habilitar Interface">
+                    <parameter id="1" optional="false" dataType="7" label="status" state="1">
+                        <description>Estado</description>
+                        <possibleValues>
+                            <value>1</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="interface">
+                        <description>Instância</description>
+                    </parameter>
+                </action>    
+                <action id="21"  description="Desabilitar Interface">
+                    <parameter id="1" optional="false" dataType="7" label="status" state="1">
+                        <description>Condição</description>
+                        <possibleValues>
+                            <value>0</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="interface">
+                        <description>Instância</description>
+                    </parameter>
+                </action>    
+                <action id="22"  description="Enviar mensagem síncrona">
+                    <parameter id="1" optional="false" dataType="10" label="message">
+                        <description>Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Message</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="target">
+                        <description>Endereço</description>                        
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="23"  description="Enviar mensagem assíncrona">
+                    <parameter id="1" optional="false" dataType="10" label="message">
+                        <description>Mensagem</description>
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Message</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="target">
+                        <description>Endereço</description>                        
+                        <possibleValues>
+                            <value>urbosenti.core.communication.Address</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="24" description="Apagar mensagens expiradas"></action>
+            </entity>
+        </component>
+        <component name="Adaptation" class="urbosenti.adaptation.AdaptationManger">
+            <entity type="1" description="Função Geral de Adaptação">
+                <!-- status -->
+                <state id="1" userCanChange="false" description="Intervalo de envio de relatórios de funcionamento ao backend" >
+                    <content dataType="4" inferiorLimit="0" initialValue="3600"></content>
+                </state>
+                <state id="2" userCanChange="false" description="Intervalo para exclusão de mensagens expiradas" >
+                    <content dataType="4" inferiorLimit="0" initialValue="3600"></content>
+                </state>
+                <state id="3" userCanChange="false" description="Permitido enviar relatórios de funcionamento ao backend" >
+                    <content dataType="7" initialValue="true" userCanChange="false" ></content>
+                </state>
+                <state id="4" userCanChange="false" description="Última data de relatório enviada" >
+                    <content dataType="10"  userCanChange="false" >
+                        <possibleValues>
+                            <value>java.util.Date</value>
+                        </possibleValues>
+                    </content>
+                </state>
+                <!-- events -->
+                <event id="1" synchronous="false" implementation="1" description="Evento desconhecido">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="9" label="error">
+                        <description>Descrição do evento</description>
+                    </parameter>
+                </event>
+                <event id="2" synchronous="false" implementation="1" description="Erro no loop de adaptação">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="9" label="error">
+                        <description>Descrição do evento</description>
+                    </parameter>
+                </event>
+                <event id="3" synchronous="false" implementation="1" description="Gerar de relatórios de funcionamento agendados">
+                    <target mandatory="true">2</target>
+                </event>
+                <event id="4" synchronous="false" implementation="1" description="Iniciar exclusão de mensagens expirada">
+                    <target mandatory="true">2</target>
+                </event>
+                <event id="5" synchronous="false" implementation="1" description="Iniciar varredura de erros nos serviços">
+                    <target mandatory="true">2</target>
+                </event>
+                <event id="6" synchronous="false" implementation="1" description="Relatório de funcionamento gerado">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="9" label="report">
+                        <description>Relatório em JSON</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="time" >
+                        <description>Data</description>
+                        <possibleValues>
+                            <value>java.util.Date</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- actions -->
+                <action id="1"  description="Alterar permissão de enviar relatórios de funcionamento">
+                    <parameter id="1" optional="false" dataType="7" label="value" state="3">
+                        <description>Novo valor</description>
+                    </parameter>
+                </action>
+                <action id="2"  description="Armazenar evento de erro interno para relato">
+                    <parameter id="1" optional="false" dataType="3" label="type" >
+                        <description>Tipo de erro</description>
+                        <possibleValues>
+                            <value>1</value>
+                            <value>2</value>
+                            <value default="true">3</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="9" label="description" >
+                        <description>Descrição</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="time" >
+                        <description>Data</description>
+                        <possibleValues>
+                            <value>java.util.Date</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="4" optional="true" dataType="3" label="instanceId" >
+                        <description>Identificador da instância no banco de dados</description>
+                    </parameter>
+                </action>
+                <action id="3"  description="Enviar relatório de funcionamento">
+                    <parameter id="1" optional="false" dataType="9" label="report">
+                        <description>Relatório em JSON</description>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="9" label="report">
+                        <description>Id do serviço</description>
+                    </parameter>
+                </action>
+                <action id="4"  description="Apagar relatórios enviados">
+                    <parameter id="1" optional="false" dataType="10" label="time">
+                        <description>Data final</description>
+                        <possibleValues>
+                            <value>java.util.Date</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="5"  description="Gerar Relatório de Funcionamento">
+                    <parameter id="1" optional="false" dataType="10" label="time">
+                        <description>Data final</description>
+                        <possibleValues>
+                            <value>java.util.Date</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+                <action id="6"  description="Atualizar última data de envio de relatório">
+                    <parameter id="1" optional="false" dataType="10" label="time">
+                        <description>Data</description>
+                        <possibleValues>
+                            <value>java.util.Date</value>
+                        </possibleValues>
+                    </parameter>
+                </action>
+            </entity>
+        </component>
+        <component name="User" class="urbosenti.user.UserManager">
+            <entity type="3" description="Gerenciamento do Usuário">
+                <!-- intances - Usuarios estaticos e iniciais podem ser adicionados aqui, contudo devem ter ids únicos entre todas as instâncias do sistema -->
+                <!-- status -->
+                <state id="1" userCanChange="false" description="Ordem do usuário" instanceState="true">
+                    <content dataType="3" inferiorLimit="0"></content>
+                </state>
+                <state id="2" userCanChange="false" description="Login do usuário" instanceState="true">
+                    <content dataType="9"></content>
+                </state>
+                <state id="3" userCanChange="true" description="Senha do usuário" instanceState="true">
+                    <content dataType="9"></content>
+                </state>
+                <state id="4" userCanChange="true" description="Aceitar o termo de privacidade?" instanceState="true">
+                    <content dataType="7"></content>
+                </state>
+                <state id="5" userCanChange="true" description="Aceitar o compartilhamento de dados de sistema" instanceState="true">
+                    <content dataType="7"></content>
+                </state>
+                <state id="6" userCanChange="true" description="Optar por upload de dados anônimo" instanceState="true">
+                    <content dataType="7"></content>
+                </state>
+                <state id="7" userCanChange="true" description="Atualmente sendo monitorado pelo sistema" instanceState="true">
+                    <content dataType="7" initialValue="true"></content>
+                </state>
+                <!-- events -->
+                <event id="1" synchronous="false" implementation="1" description="Usuário incluído">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="2" synchronous="false" implementation="1" description="Usuário alterado">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="3" synchronous="false" implementation="1" description="Usuário excluído">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="4" synchronous="false" implementation="1" description="Usuário acessado para leitura">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="5" synchronous="false" implementation="1" description="Perfil escolhido de usuário a ser monitorado">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- actions - Não possui -->
+            </entity>
+            <entity type="1" description="Autenticação do Usuário">
+                <!-- status - nao possui  -->
+                <!-- events -->
+                <event id="6" synchronous="false" implementation="1" description="Usuário Executou Login">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="7" synchronous="false" implementation="1" description="Usuário Executou Logoff">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- actions - Não possui -->
+            </entity>
+            <entity type="1" description="Configurações de Perfil do Usuário">
+                <!-- status - Carregado dinamicamento dos demais módulos para exibição -->
+                <!-- events -->
+                <event id="8" synchronous="false" implementation="1" description="Configuração de sistema alterada pelo usuário">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="10" label="component">
+                        <description>Componente</description>
+                        <possibleValues>
+                            <value>urbosenti.core.device.ComponentManager</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="3" label="entity">
+                        <description>Entidade</description>
+                    </parameter>
+                    <parameter id="4" optional="false" dataType="3" label="state">
+                        <description>Estado</description>
+                    </parameter>
+                    <parameter id="5" optional="false" dataType="10" label="newValue">
+                        <description>Novo valor</description>
+                        <possibleValues>
+                            <value>java.lang.Object</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <event id="9" synchronous="false" implementation="1" description="Configuração de privacidade alterada">
+                    <target mandatory="true">2</target>
+                    <parameter id="1" optional="false" dataType="10" label="user">
+                        <description>Usuário</description>
+                        <possibleValues>
+                            <value>urbosenti.user.User</value>
+                        </possibleValues>
+                    </parameter>
+                    <parameter id="2" optional="false" dataType="3" label="state">
+                        <description>Estado</description>
+                    </parameter>
+                    <parameter id="3" optional="false" dataType="10" label="newValue">
+                        <description>Novo valor</description>
+                        <possibleValues>
+                            <value>java.lang.Object</value>
+                        </possibleValues>
+                    </parameter>
+                </event>
+                <!-- actions - Não possui -->
+            </entity>
+        </component>
+        <component name="Context" class="urbosenti.context.ContextManager"></component>
+        <component name="Location" class="urbosenti.location.LocationManager"></component>
+        <component name="Resources" class="urbosenti.resouces.ResourceManager"></component>
+        <component name="Concerns" class="urbosenti.concerns.ConcernManager"></component>
+    </device>
+    <agentModels version="1.0">
+        <agentModel acl="1" agentType="1">
+            <state id="1" userCanChange="true" description="Taxa de upload">
+                <content dataType="6" inferiorLimit="0.0" superiorLimit="1.0" initialValue="1.0"></content>
+            </state>
+            <interaction id="1" type="1" direction="1" description="Atualização da taxa de upload">
+                <communicativeAct>8</communicativeAct>
+                <parameter id="1" optional="false" dataType="6" label="uploadRate" state="1">
+                    <description>Taxa de upload</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="9" label="uid">
+                    <description>UID do servidor</description>
+                </parameter>
+            </interaction>
+            <interaction id="2" type="1" direction="2" description="Assinar taxa de upload">
+                <communicativeAct>22</communicativeAct>
+                <parameter id="1" optional="false" dataType="9" label="address">
+                    <description>Endereço do Assinante</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="9" label="interface">
+                    <description>Interface de entrada</description>
+                    <possibleValues>
+                        <value>GCM</value>
+                        <value>Socket</value>
+                    </possibleValues>
+                </parameter>
+                <parameter id="3" optional="false" dataType="9" label="uid">
+                    <description>UID do assinante</description>
+                </parameter>
+                <parameter id="4" optional="false" dataType="9" label="layer">
+                    <description>Camada</description>
+                    <possibleValues>
+                        <value>System</value>
+                        <value>Application</value>
+                    </possibleValues>
+                </parameter>
+            </interaction>
+            <interaction id="3" type="2" direction="2" primaryInteraction="2" description="Cancelar assinatura">
+                <communicativeAct>3</communicativeAct>
+                <parameter id="1" optional="false" dataType="9" label="uid">
+                    <description>UID do assinante</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="3" label="conversation">
+                    <description>Id da conversa primária</description>
+                </parameter>
+                <parameter id="3" optional="false" dataType="3" label="cancelCode">
+                    <description>Id do motivo</description>
+                </parameter>
+                <parameter id="4" optional="false" dataType="9" label="description">
+                    <description>Descrição</description>
+                </parameter>
+            </interaction>
+            <interaction id="4" type="2" direction="1" primaryInteraction="2" description="Falha ao assinar">
+                <communicativeAct>7</communicativeAct>
+                <parameter id="1" optional="false" dataType="3" label="errorCode">
+                    <description>Id da falha</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="9" label="description">
+                    <description>Descrição da falha</description>
+                </parameter>
+                <parameter id="3" optional="false" dataType="3" label="conversation">
+                    <description>Id da conversa primária</description>
+                </parameter>
+                <parameter id="4" optional="false" dataType="9" label="uid">
+                    <description>UID do servidor</description>
+                </parameter>
+            </interaction>
+            <interaction id="5" type="2" direction="1" primaryInteraction="2" description="Mensagem não entendida">
+                <communicativeAct>11</communicativeAct>
+                <parameter id="1" optional="false" dataType="3" label="conversation">
+                    <description>Id da conversa primária</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="9" label="uid">
+                    <description>UID do servidor</description>
+                </parameter>
+            </interaction>
+            <interaction id="6" type="2" direction="1" primaryInteraction="2" description="Assinatura aceita">
+                <communicativeAct>2</communicativeAct>
+                <parameter id="1" optional="false" dataType="3" label="conversation">
+                    <description>Id da conversa primária</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="9" label="uid">
+                    <description>UID do servidor</description>
+                </parameter>
+            </interaction>
+            <interaction id="7" type="2" direction="1" primaryInteraction="2" description="Assinatura recusada">
+                <communicativeAct>17</communicativeAct>
+                <parameter id="1" optional="false" dataType="3" label="conversation">
+                    <description>Id da conversa primária</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="3" label="refuseCode">
+                    <description>Id do motivo</description>
+                </parameter>
+                <parameter id="3" optional="false" dataType="9" label="conversation">
+                    <description>Motivo da recusa</description>
+                </parameter>
+                <parameter id="4" optional="false" dataType="9" label="uid">
+                    <description>UID do servidor</description>
+                </parameter>
+            </interaction>
+            <interaction id="8" type="2" direction="1" primaryInteraction="2" description="Assinatura cancelada">
+                <communicativeAct>3</communicativeAct>
+                <parameter id="1" optional="false" dataType="9" label="uid">
+                    <description>UID do servidor</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="3" label="conversation">
+                    <description>Id da conversa primária</description>
+                </parameter>
+                <parameter id="3" optional="false" dataType="3" label="cancelCode">
+                    <description>Id do motivo</description>
+                </parameter>
+                <parameter id="4" optional="false" dataType="9" label="description">
+                    <description>Descrição</description>
+                </parameter>
+            </interaction>
+            <interaction id="9" type="1" direction="2" description="Atualizar endereço de entrada">
+                <communicativeAct>8</communicativeAct>
+                <parameter id="1" optional="false" dataType="9" label="uid">
+                    <description>UID do assinante</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="9" label="interface">
+                    <description>Interface de entrada</description>
+                    <possibleValues>
+                        <value>GCM</value>
+                        <value>Socket</value>
+                    </possibleValues>
+                </parameter>
+                <parameter id="3" optional="false" dataType="9" label="address">
+                    <description>Endereço do Assinante</description>
+                </parameter>
+            </interaction>
+            <interaction id="10" type="1" direction="2" description="Atualizar endereço de entrada">
+                <communicativeAct>8</communicativeAct>
+                <parameter id="1" optional="false" dataType="9" label="uid">
+                    <description>UID do assinante</description>
+                </parameter>
+                <parameter id="2" optional="false" dataType="9" label="report">
+                    <description>Conteúdo capturado durante o intervalo</description>
+                </parameter>
+            </interaction>
+        </agentModel>
+    </agentModels>
+</UrboSentiDevice>

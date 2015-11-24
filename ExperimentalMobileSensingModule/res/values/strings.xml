@@ -1,0 +1,24 @@
+<resources>
+
+    <string name="app_name">UrboSenti Sensing Module</string>
+	
+	<string name="ServiceStatusTitle">Service Status: </string>
+	
+	<string name="startStopService">Start/Stop Service</string>
+    
+    <string name="statusOnline">Online</string>
+    
+    <string name="statusOffline">Offline</string>
+    
+    <string name="DefaultServiceStatus">Stopped</string>
+    <string name="RunningServiceStatus">Running</string>
+    
+    <string name="applicationEnvironmentTitle">Application Environment</string>
+    
+    <string name="back">Back</string>
+    
+    <string name="stopService">Stop Service</string>
+    
+    <string name="startService">Start Service</string>
+    
+</resources>
