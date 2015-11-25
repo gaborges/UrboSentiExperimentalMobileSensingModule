@@ -33,6 +33,13 @@ public class SocketPushServiceReceiver extends PushServiceReceiver {
         super.setDescription("Socket Input Interface");
         this.port = 55666;
     }
+    
+    public SocketPushServiceReceiver(CommunicationManager communicationManager, int port) {
+        super(communicationManager);
+        super.setId(1);
+        super.setDescription("Socket Input Interface");
+        this.port = port;
+    }
 
     @Override
     public void stop() {

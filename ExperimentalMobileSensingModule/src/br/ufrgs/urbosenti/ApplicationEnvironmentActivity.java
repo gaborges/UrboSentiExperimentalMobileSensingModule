@@ -64,7 +64,20 @@ public class ApplicationEnvironmentActivity extends Activity {
 			public void onClick(View v) {
 				// Execute the service
 				// Instanciar componentes -- Device manager e os demais onDemand
-
+				//# experimento 1 (Aplicação) - (0) porta; (1) Experimento; (2) tempo de parada(s); (3) intervalo entre uploads 
+				//String args[] = {"55666","1","172800","10000"};
+				String args[] = {"55666","1","125","10000"};
+				// # Experimento 2 (Eventos internos): (0) porta; (1) Experimento, (2) quantityOfEvents, 
+				// # (3) quantityOfRules, (4) quantityOfConditions,(5) parâmetro nulo ,(6) nomeArquivoDeSaída
+				//String args[] = {"55666","2","100","50","1","0","experimento01"};
+				// # Experimento 3 (Interações): (0) porta; 	(1) Experimento, (2) modo de operação 1 (Escutador)
+				//String args[] = {"55666","3","1"};
+				// # Experimento 3 (Interações): (0) porta; (1) Experimento, (2) modo de operação 2 (Envia mensagens)
+				// # (3) quantityOfEvents, (4) int quantityOfRules, (5) quantityOfConditions,
+				// # (6) nomeArquivoDeSaída; (7) arquivo de lista de ips; (8) desligar escutadores?
+				//String args[] = {"55666","3","2","20","50","1","experimento01","ipsAddresses.in","yes"};
+				
+				intent.putExtra("args", args);
 				startService(intent);
 				txtServiceStatus.setText(R.string.RunningServiceStatus);
 			}

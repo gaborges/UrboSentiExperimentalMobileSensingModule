@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.app.Service;
 import android.content.Intent;
@@ -18,7 +20,6 @@ import br.ufrgs.urbosenti.test.TestCommunication;
 import br.ufrgs.urbosenti.test.TestECADiagnosisModel;
 import br.ufrgs.urbosenti.test.TestManager;
 import br.ufrgs.urbosenti.test.TestStaticPlanningModel;
-import urbosenti.core.communication.Message;
 import urbosenti.core.communication.PushServiceReceiver;
 import urbosenti.core.communication.receivers.SocketPushServiceReceiver;
 import urbosenti.core.device.DeviceManager;
@@ -35,79 +36,7 @@ public class UrboSentiService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		args = intent.getStringArrayExtra("args");
-		deviceManager = new DeviceManager(); // Objetos Core já estão
-		// incanciados internamente
-		if (args[1].equals("1") && args.length == 5) {
-			// se não tem não habilita adaptação, senão faz adaptação
-			if (!args[4].trim().equals("no") && !args[4].trim().equals("n")) {
-				// adaptação
-				deviceManager.enableAdaptationComponent(); // Habilita
-															// componente de
-															// adaptação
-				// adiciona os tradadores de evento cursomisados
-				deviceManager.getAdaptationManager().setDiagnosisModel(new TestECADiagnosisModel(deviceManager));
-				deviceManager.getAdaptationManager().setPlanningModel(new TestStaticPlanningModel(deviceManager));
-			}
-		} else {
-			deviceManager.enableAdaptationComponent(); // Habilita componente de
-														// adaptação
-			// adiciona os tradadores de evento cursomisados
-			deviceManager.getAdaptationManager().setDiagnosisModel(new TestECADiagnosisModel(deviceManager));
-			deviceManager.getAdaptationManager().setPlanningModel(new TestStaticPlanningModel(deviceManager));
-		}
-		try {
-			testManager = null;
-			if (args.length >= 5 && Integer.parseInt(args[1]) != 1) { // tem 5
-																		// ou
-																		// mais
-																		// itens,
-																		// então
-																		// usa o
-																		// parâmetro
-																		// 5 do
-																		// arquivo
-				testManager = new TestManager(deviceManager, args[6]);
-
-			} else {
-				testManager = new TestManager(deviceManager);
-			}
-			deviceManager.addComponentManager(testManager);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// Adicionar as interfaces de comunicação suportadas --- Inicialmente
-		// manual. Após adicionar um processo automático
-		deviceManager.addSupportedCommunicationInterface(new AndroidGeneralCommunicationInterface(getBaseContext()));
-		ConcreteApplicationHandler handler = new ConcreteApplicationHandler(deviceManager);
-		deviceManager.getEventManager().subscribe(handler);
-		PushServiceReceiver teste = new SocketPushServiceReceiver(deviceManager.getCommunicationManager());
-		deviceManager.addSupportedInputCommunicationInterface(teste);
-		deviceManager.setOSDiscovery(new AndroidOperationalSystemDiscovery(getBaseContext()));
-		Log.d("LOG", "adicionou comunicação e o Application Handle");
-		try {
-			deviceManager.setDeviceKnowledgeRepresentationModel(getAssets().open("deviceKnowledgeModel.xml"),
-					"xmlInputStream");
-			Log.d("LOG", "Adicionou o conhecimento ");
-			SQLiteAndroidDatabaseHelper dbHelper = new SQLiteAndroidDatabaseHelper(deviceManager.getDataManager(),
-					getBaseContext());
-			Log.d("LOG", "Criou o DB Handler ");
-			deviceManager.getDataManager().setUrboSentiDatabaseHelper(dbHelper);
-			// SQLiteDatabase db = (SQLiteDatabase)
-			// dbHelper.openDatabaseConnection();
-			// Log.d("LOG", "Abriu a conexão ");
-			// dbHelper.createDatabase();
-			// Log.d("LOG", "Tentou criar o DB ");
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			Log.d("Error", "IO: " + e.getMessage());
-		}
-		deviceManager.onCreate();
-		Log.d("DEBUG", "onCreateCompletado");
+		
 		return null;
 	}
 
@@ -144,12 +73,110 @@ public class UrboSentiService extends Service {
 	 */
 	@Override
 	public void onCreate() {
+		
+	}
 
+	
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		args = intent.getStringArrayExtra("args");
+		for(String a : args){
+			Log.d("ARG",a);
+		}
+		deviceManager = new DeviceManager(); // Objetos Core já estão
+		// incanciados internamente
+		if (args[1].equals("1") && args.length == 5) {
+			// se não tem não habilita adaptação, senão faz adaptação
+			if (!args[4].trim().equals("no") && !args[4].trim().equals("n")) {
+				// adaptação
+				deviceManager.enableAdaptationComponent(); // Habilita
+															// componente de
+															// adaptação
+				// adiciona os tradadores de evento cursomisados
+				deviceManager.getAdaptationManager().setDiagnosisModel(new TestECADiagnosisModel(deviceManager));
+				deviceManager.getAdaptationManager().setPlanningModel(new TestStaticPlanningModel(deviceManager));
+			}
+		} else {
+			deviceManager.enableAdaptationComponent(); // Habilita componente de
+														// adaptação
+			// adiciona os tradadores de evento cursomisados
+			deviceManager.getAdaptationManager().setDiagnosisModel(new TestECADiagnosisModel(deviceManager));
+			deviceManager.getAdaptationManager().setPlanningModel(new TestStaticPlanningModel(deviceManager));
+		}
+		try {
+			testManager = null;
+			if (args.length >= 5 && Integer.parseInt(args[1]) != 1) { // tem 5
+																		// ou
+																		// mais
+																		// itens,
+																		// então
+																		// usa o
+																		// parâmetro
+																		// 5 do
+																		// arquivo
+				testManager = new TestManager(deviceManager, args[6], getBaseContext());
+
+			} else {
+				testManager = new TestManager(deviceManager, getBaseContext());
+			}
+			deviceManager.addComponentManager(testManager);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// Adicionar as interfaces de comunicação suportadas --- Inicialmente
+		// manual. Após adicionar um processo automático
+		deviceManager.addSupportedCommunicationInterface(new AndroidGeneralCommunicationInterface(getBaseContext()));
+		ConcreteApplicationHandler handler = new ConcreteApplicationHandler(deviceManager);
+		deviceManager.getEventManager().subscribe(handler);
+		PushServiceReceiver teste = new SocketPushServiceReceiver(deviceManager.getCommunicationManager(),Integer.parseInt(args[0]));
+		deviceManager.addSupportedInputCommunicationInterface(teste);
+		deviceManager.setOSDiscovery(new AndroidOperationalSystemDiscovery(getBaseContext()));
+		Log.d("LOG", "adicionou comunicação e o Application Handle");
+		try {
+			deviceManager.setDeviceKnowledgeRepresentationModel(getAssets().open("deviceKnowledgeModel.xml"),
+					"xmlInputStream");
+			Log.d("LOG", "Adicionou o conhecimento ");
+			SQLiteAndroidDatabaseHelper dbHelper = new SQLiteAndroidDatabaseHelper(deviceManager.getDataManager(),
+					getBaseContext());
+			Log.d("LOG", "Criou o DB Handler ");
+			deviceManager.getDataManager().setUrboSentiDatabaseHelper(dbHelper);
+			// SQLiteDatabase db = (SQLiteDatabase)
+			// dbHelper.openDatabaseConnection();
+			// Log.d("LOG", "Abriu a conexão ");
+			// dbHelper.createDatabase();
+			// Log.d("LOG", "Tentou criar o DB ");
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			Log.d("Error", "IO: " + e.getMessage());
+		}
+		deviceManager.onCreate();
+		Log.d("DEBUG", "onCreateCompletado");
+		try {
+			/**
+			 * *** Processo de inicialização dos serviços ****
+			 */
+			deviceManager.startUrboSentiServices();
+		} catch (IOException ex) {
+			Log.d("Error", ex.getLocalizedMessage());
+			System.exit(-1);
+		} catch (SQLException ex) {
+			Log.d("Error", ex.getMessage());
+		}
+		Log.d("DEBUG", "inicialização dos serviços da urbosenti completado");
+		// início do teste
 		Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
+					System.out.println("Início experimento: " + (new Date()).getTime());
+			        String currentData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date());
+			        System.out.println("Início experimento: " + currentData);
 					/**
 					 * *** Inicio das funções e aplicação de sensoriamento ****
 					 */
@@ -279,6 +306,10 @@ public class UrboSentiService extends Service {
 						}
 						break;
 					}
+					deviceManager.stopUrboSentiServices();
+					System.out.println("Fim experimento: " + (new Date()).getTime());
+			        currentData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date());
+			        System.out.println("Fim experimento: " + currentData);					
 				} catch (NumberFormatException e) {
 					Log.d("ERROR", e.getLocalizedMessage());
 				} catch (IOException e) {
@@ -289,42 +320,14 @@ public class UrboSentiService extends Service {
 			}
 		});
 		t.start();
-		Log.d("DEBUG", "inicialização dos serviços da urbosenti completado");
-
-		try {
-			Message m = new Message();
-			m.setContent("oiiiiii");
-
-			// Envia o relato
-			deviceManager.getCommunicationManager().addReportToSend(m);
-			m = new Message();
-			m.setContent("oiiiiii");
-
-			// Envia o relato
-			deviceManager.getCommunicationManager().addReportToSend(m);
-			Log.d("DEBUG", "Relato enviado");
-			m = new Message();
-			m.setContent("oiiiiii");
-
-			// Envia o relato
-			deviceManager.getCommunicationManager().addReportToSend(m);
-			m = new Message();
-			m.setContent("oiiiiii");
-
-			// Envia o relato
-			deviceManager.getCommunicationManager().addReportToSend(m);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		return super.onStartCommand(intent, flags, startId);
 	}
 
 	@Override
 	public void onDestroy() {
-		deviceManager.stopUrboSentiServices();
+		if(deviceManager.isRunning()){
+			deviceManager.stopUrboSentiServices();
+		}
 		Log.d("DEBUG", "Serviços parados");
 	}
 }

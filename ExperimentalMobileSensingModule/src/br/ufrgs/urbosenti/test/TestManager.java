@@ -7,6 +7,7 @@ package br.ufrgs.urbosenti.test;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import android.content.Context;
 import urbosenti.core.device.ComponentManager;
 import urbosenti.core.device.DeviceManager;
 import urbosenti.core.device.model.FeedbackAnswer;
@@ -133,8 +136,8 @@ public class TestManager extends ComponentManager implements Runnable {
     public static final int COMPONENT_ID = 11;
 
     private final DeviceManager deviceManager;
-    private final FileWriter experimentalResults;
-    private final BufferedWriter writer;
+    //private final FileWriter experimentalResults;
+    private final FileOutputStream writer;
     private Event continuousEvent;
     private int eventCount;
     private int eventLimit;
@@ -143,26 +146,27 @@ public class TestManager extends ComponentManager implements Runnable {
     private Thread thread;
     private boolean shudown;
 
-    public TestManager(DeviceManager deviceManager, String filesName) throws IOException {
+    public TestManager(DeviceManager deviceManager, String filesName,Context context) throws IOException {
         super(deviceManager, COMPONENT_ID);
         this.deviceManager = deviceManager;
-        this.experimentalResults = new FileWriter(new File("actionResults" + filesName + ".out"));
-        this.writer = new BufferedWriter(this.experimentalResults);
+        FileOutputStream outputStream = context.openFileOutput("actionResults" + filesName + ".out", Context.MODE_APPEND);
+        //this.experimentalResults = new FileWriter(new File("actionResults" + filesName + ".out"));
+        this.writer = outputStream;
         this.shudown = false;
         this.eventCount = 0;
         this.eventLimit = 1;
         this.interactionMode = 0;
     }
 
-    public TestManager(DeviceManager deviceManager) throws IOException {
-        this(deviceManager, "");
+    public TestManager(DeviceManager deviceManager, Context context) throws IOException {
+        this(deviceManager, "",context);
     }
 
     public void startExperimentOfInternalEvents(int quantityOfEvents, int quantityOfRules, int quantityOfConditions) throws IOException {
         Event event;
         Date fistDate = new Date();
         HashMap<String, Object> values;
-        this.writer.write(fistDate.getTime()+"\n");
+        this.writer.write((fistDate.getTime()+"\n").getBytes());
         for (int i = 0; i < quantityOfEvents; i++) {
             event = new SystemEvent(this);
             event.setId(EVENT_GENERIC_EVENT);
@@ -181,7 +185,7 @@ public class TestManager extends ComponentManager implements Runnable {
         Event event;
         Date fistDate = new Date();
         HashMap<String, Object> values;
-        this.writer.write(fistDate.getTime()+"\n");
+        this.writer.write((fistDate.getTime()+"\n").getBytes());
         for (int i = 0; i < quantityOfInteractions; i++) {
             event = new SystemEvent(this);
             event.setId(EVENT_START_INTERACTION);
@@ -203,7 +207,7 @@ public class TestManager extends ComponentManager implements Runnable {
         Date fistDate = new Date();
         HashMap<String, Object> values;
         this.eventLimit = quantityOfInteractions;
-        this.writer.write(fistDate.getTime()+"\n");
+        this.writer.write((fistDate.getTime()+"\n").getBytes());
         this.continuousEvent = new SystemEvent(this);
         this.continuousEvent.setId(EVENT_START_INTERACTION);
         this.continuousEvent.setName("Continuos interaction event!");
@@ -272,7 +276,7 @@ public class TestManager extends ComponentManager implements Runnable {
                 try {
                     //tempoevento,id evento,tempoacao
                     //this.writer.write(event.getTime().getTime() + "," + event.getId() + "," + (new Date()).getTime() + "\n");
-                    this.writer.write((new Date()).getTime() + "\n");
+                    this.writer.write(((new Date()).getTime() + "\n").getBytes());
                 } catch (IOException ex) {
                     if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                         Logger.getLogger(TestManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -285,7 +289,7 @@ public class TestManager extends ComponentManager implements Runnable {
                     // id o evento (eventId); tempo do evento (timestampEvent); ip (ip); porta(port)
                     //tempoevento,id evento,tempoacao
                     //this.writer.write(action.getParameters().get("timestampEvent") + "," + action.getParameters().get("eventId") + "," + (new Date()).getTime() + "\n");
-                    this.writer.write((new Date()).getTime() + "\n");
+                    this.writer.write(((new Date()).getTime() + "\n").getBytes());
                     this.eventCount++;
 //                    System.out.println("-- "+this.eventCount);
                     if(this.interactionMode==1){
