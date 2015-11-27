@@ -156,24 +156,25 @@ public class UrboSentiService extends Service {
 		}
 		deviceManager.onCreate();
 		Log.d("DEBUG", "onCreateCompletado");
-		try {
-			/**
-			 * *** Processo de inicialização dos serviços ****
-			 */
-			deviceManager.startUrboSentiServices();
-		} catch (IOException ex) {
-			Log.d("Error", ex.getLocalizedMessage());
-			System.exit(-1);
-		} catch (SQLException ex) {
-			Log.d("Error", ex.getMessage());
-		}
-		Log.d("DEBUG", "inicialização dos serviços da urbosenti completado");
+		
 		// início do teste
 		Thread t = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
+					try {
+						/**
+						 * *** Processo de inicialização dos serviços ****
+						 */
+						deviceManager.startUrboSentiServices();
+					} catch (IOException ex) {
+						Log.d("Error", ex.getLocalizedMessage());
+						System.exit(-1);
+					} catch (SQLException ex) {
+						Log.d("Error", ex.getMessage());
+					}
+					Log.d("DEBUG", "inicialização dos serviços da urbosenti completado");
 					System.out.println("Início experimento: " + (new Date()).getTime());
 			        String currentData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date());
 			        System.out.println("Início experimento: " + currentData);
