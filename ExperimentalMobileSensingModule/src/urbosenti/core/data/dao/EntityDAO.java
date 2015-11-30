@@ -72,6 +72,9 @@ public class EntityDAO {
             entity.setEntityType(type);
             entities.add(entity);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return entities;
     }
 
@@ -94,6 +97,9 @@ public class EntityDAO {
             entity.setDescription(cursor.getString(cursor.getColumnIndex("entity_desc")));
             EntityType type = new EntityType(cursor.getInt(cursor.getColumnIndex("entity_type_id")), cursor.getString(cursor.getColumnIndex("type_desc")));
             entity.setEntityType(type);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return entity;
     }

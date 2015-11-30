@@ -65,6 +65,7 @@ public class ComponentDAO {
                             cursor.getString(cursor.getColumnIndex("description")),
                             cursor.getString(cursor.getColumnIndex("code_class"))));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return components;
 
     }
@@ -84,6 +85,7 @@ public class ComponentDAO {
                             cursor.getString(cursor.getColumnIndex("possible_value")),
                             cursor.getString(cursor.getColumnIndex("default_value")));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return component;
 
     }

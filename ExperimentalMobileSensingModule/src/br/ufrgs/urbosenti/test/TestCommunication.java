@@ -14,6 +14,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import android.content.Context;
+import android.os.Handler;
+import android.util.Log;
 import urbosenti.core.communication.Address;
 import urbosenti.core.communication.Message;
 import urbosenti.core.device.DeviceManager;
@@ -300,10 +304,19 @@ public class TestCommunication {
                 }
             }
         }, 50, endInterval);
-
-        try {
-            Thread.sleep(stopTime);
-
+        final Timer endTimer = new Timer("Experiment end timer");
+        endTimer.schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				deviceManager.stopUrboSentiServices();
+				System.out.println("Fim experimento: " + (new Date()).getTime());
+				String currentData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date());
+		        System.out.println("Fim experimento: " + currentData);	
+		        Log.d("DEBUG", "Fim experimento: " + currentData);
+		        timer.cancel();
+			}
+		}, new Date((System.currentTimeMillis()+experimentalTime)));
 //        while (true) {
 //            synchronized (lock) {
 //                if (end == true) {
@@ -317,9 +330,6 @@ public class TestCommunication {
 //                }
 //            }
 //        }
-        } catch (InterruptedException ex) {
-            Logger.getLogger(TestCommunication.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     public void testaEnvioMensagemSemRetorno() {

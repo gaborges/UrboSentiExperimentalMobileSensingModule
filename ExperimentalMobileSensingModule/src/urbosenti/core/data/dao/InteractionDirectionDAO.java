@@ -5,8 +5,6 @@
  */
 package urbosenti.core.data.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import android.content.ContentValues;

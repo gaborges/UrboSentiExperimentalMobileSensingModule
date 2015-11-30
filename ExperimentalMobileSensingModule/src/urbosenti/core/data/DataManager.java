@@ -371,4 +371,8 @@ public class DataManager extends ComponentManager {
         this.databaseHelper = databaseHelper;
     }
     
+    public UrboSentiDatabaseHelper getDatabaseHelper() {
+		return databaseHelper;
+	}
+    
 }

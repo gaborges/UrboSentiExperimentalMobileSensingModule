@@ -17,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import android.content.Context;
+import android.support.v4.content.FileProvider;
 import urbosenti.core.device.ComponentManager;
 import urbosenti.core.device.DeviceManager;
 import urbosenti.core.device.model.FeedbackAnswer;
@@ -149,7 +150,8 @@ public class TestManager extends ComponentManager implements Runnable {
     public TestManager(DeviceManager deviceManager, String filesName,Context context) throws IOException {
         super(deviceManager, COMPONENT_ID);
         this.deviceManager = deviceManager;
-        FileOutputStream outputStream = context.openFileOutput("actionResults" + filesName + ".out", Context.MODE_APPEND);
+        FileOutputStream outputStream = context.openFileOutput("actionResults" + filesName + ".out", Context.MODE_WORLD_READABLE);
+        
         //this.experimentalResults = new FileWriter(new File("actionResults" + filesName + ".out"));
         this.writer = outputStream;
         this.shudown = false;

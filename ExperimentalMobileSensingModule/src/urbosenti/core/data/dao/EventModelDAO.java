@@ -167,6 +167,9 @@ public class EventModelDAO {
             content.setTime(new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex("reading_time")))));
             content.setValue(Content.parseContent(parameter.getDataType(), cursor.getString(cursor.getColumnIndex("reading_value"))));
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return content;
     }
 
@@ -213,6 +216,9 @@ public class EventModelDAO {
             event.setParameters(this.getEventParameters(event));
             events.add(event);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return events;
     }
 
@@ -231,6 +237,9 @@ public class EventModelDAO {
             target.setMandatory(cursor.getInt(cursor.getColumnIndex("mandatory")) > 0);
             target.setEvent(event);
             targets.add(target);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return targets;
     }
@@ -278,6 +287,9 @@ public class EventModelDAO {
             }
             parameters.add(parameter);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return parameters;
     }
 
@@ -306,6 +318,9 @@ public class EventModelDAO {
             event.setTargets(this.getEventTargets(event));
             event.setParameters(this.getEventParameters(event));
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return event;
     }
 
@@ -327,6 +342,9 @@ public class EventModelDAO {
             event.setImplementation(new Implementation(cursor.getInt(cursor.getColumnIndex("implementation_type_id")), cursor.getString(cursor.getColumnIndex("implementation_description"))));
             event.setTargets(this.getEventTargets(event));
             event.setParameters(this.getEventParameters(event));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return event;
     }
@@ -387,6 +405,9 @@ public class EventModelDAO {
         } else {
             throw new SQLException("Select time from generated_events table failed.");
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return eventTime;
     }
 
@@ -411,6 +432,9 @@ public class EventModelDAO {
             content.setTime(new Date(cursor.getLong(cursor.getColumnIndex("time"))));
             content.setId(cursor.getInt(cursor.getColumnIndex("id")));
             content.setValue(value);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return content;
     }
@@ -443,6 +467,9 @@ public class EventModelDAO {
             event.setTimeout(cursor.getInt(cursor.getColumnIndex("timeout")));
             event.setName(cursor.getString(cursor.getColumnIndex("description")));
             event.setSynchronous(cursor.getInt(cursor.getColumnIndex("synchronous")) > 0 );
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return event;
     }
@@ -506,6 +533,9 @@ public class EventModelDAO {
             parameter.setPossibleContents(this.getPossibleContents(parameter));
             parameters.add(parameter);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return parameters;
     }
     
@@ -524,6 +554,9 @@ public class EventModelDAO {
                             cursor.getString(cursor.getColumnIndex("possible_value"))), cursor
                     .getInt(cursor.getColumnIndex("default_value")) > 0));
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return possibleContents;
     }
     
@@ -532,6 +565,9 @@ public class EventModelDAO {
         Cursor cursor = this.database.rawQuery("SELECT id FROM generated_events ORDER BY id DESC LIMIT 1;",null);
         if(cursor.moveToNext()){
             id = cursor.getInt(cursor.getColumnIndex("id"));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return id;
     }
@@ -545,6 +581,9 @@ public class EventModelDAO {
         		});
         if(cursor.moveToNext()){
             id = cursor.getInt(cursor.getColumnIndex("id"));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return id;
     }

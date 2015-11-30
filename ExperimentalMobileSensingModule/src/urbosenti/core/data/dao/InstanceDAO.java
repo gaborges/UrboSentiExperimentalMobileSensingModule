@@ -5,11 +5,7 @@
  */
 package urbosenti.core.data.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -126,6 +122,9 @@ public class InstanceDAO {
             content.setTime(new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex("reading_time")))));
             content.setValue(Content.parseContent(state.getDataType(), cursor.getString(cursor.getColumnIndex("reading_value"))));
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return content;
     }
 
@@ -167,6 +166,9 @@ public class InstanceDAO {
             instance.setStates(this.getInstanceStates(instance));
             instances.add(instance);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return instances;
     }
 
@@ -205,6 +207,9 @@ public class InstanceDAO {
             }
             states.add(state);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return states;
     }
 
@@ -222,6 +227,9 @@ public class InstanceDAO {
                             cursor.getInt(cursor.getColumnIndex("id")),
                             Content.parseContent(state.getDataType(), cursor.getString(cursor.getColumnIndex("possible_value"))),
                             cursor.getInt(cursor.getColumnIndex("default_value")) > 0));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return possibleContents;
     }
@@ -252,6 +260,9 @@ public class InstanceDAO {
                     		cursor.getString(cursor.getColumnIndex("comp_desc")), 
                     		cursor.getString(cursor.getColumnIndex("code_class"))));
             instance.setStates(this.getInstanceStates(instance));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return instance;
     }
@@ -289,6 +300,9 @@ public class InstanceDAO {
                     	));
             instance.setStates(this.getInstanceStates(instance));
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return instance;
     }
 
@@ -302,6 +316,9 @@ public class InstanceDAO {
             count = cursor.getInt(0);
         } else {
             throw new SQLException("Failed to counting the instances.");
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return count;
     }
@@ -341,6 +358,9 @@ public class InstanceDAO {
                     		cursor.getString(cursor.getColumnIndex("comp_desc")), 
                     		cursor.getString(cursor.getColumnIndex("code_class"))));
             instance.setStates(this.getInstanceStates(instance));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return instance;
     }
@@ -390,6 +410,9 @@ public class InstanceDAO {
             }
             states.add(state);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return states;
     }
 
@@ -437,6 +460,9 @@ public class InstanceDAO {
             instance.setStates(this.getUserInstanceStates(instance, userInstance));
             instances.add(instance);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return instances;
     }
 
@@ -460,6 +486,9 @@ public class InstanceDAO {
             content.setTime(new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex("reading_time")))));
             content.setValue(Content.parseContent(state.getDataType(), cursor.getString(cursor.getColumnIndex("reading_value"))));
             content.setMonitoredInstance(userInstance);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return content;
     }
@@ -532,6 +561,9 @@ public class InstanceDAO {
             instance.setStates(this.getInstanceStates(instance));
             instances.add(instance);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return instances;
     }
     
@@ -558,6 +590,9 @@ public class InstanceDAO {
             content.setId(cursor.getInt(cursor.getColumnIndex("id")));
             content.setTime(new Date(Long.parseLong(cursor.getString(cursor.getColumnIndex("reading_time")))));
             content.setValue(Content.parseContent(new DataType(cursor.getInt(cursor.getColumnIndex("data_type_id")), ""), cursor.getString(cursor.getColumnIndex("reading_value"))));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return content;
     }

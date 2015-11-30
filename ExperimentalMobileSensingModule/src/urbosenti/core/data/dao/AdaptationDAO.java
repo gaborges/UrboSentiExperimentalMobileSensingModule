@@ -275,6 +275,7 @@ public final class AdaptationDAO {
             entity.setStateModels(this.dataManager.getEntityStateDAO().getEntityStateModels(entity));
             deviceComponent.getEntities().add(entity);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return deviceComponent;
     }
 
@@ -601,6 +602,7 @@ public final class AdaptationDAO {
         while (cursor.moveToNext()) {
             return cursor.getInt(cursor.getColumnIndex("id"));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return null;
     }
 

@@ -61,7 +61,8 @@ public class AgentTypeDAO {
             agentType = new AgentType();
             agentType.setId(cursor.getInt(cursor.getColumnIndex("id")));
             agentType.setDescription(cursor.getString(cursor.getColumnIndex("description")));
-        }        
+        }     
+        if(!cursor.isClosed()){cursor.close();}
         return agentType;
     }
 
@@ -319,6 +320,7 @@ public class AgentTypeDAO {
             interaction.setParameters(this.getInteractionParameters(interaction));
             interactions.add(interaction);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return interactions;
     }
 
@@ -356,6 +358,8 @@ public class AgentTypeDAO {
             }
             states.add(state);
         }
+
+        if(!cursor.isClosed()){cursor.close();}
         return states;
     }
 
@@ -383,6 +387,7 @@ public class AgentTypeDAO {
             interaction.setInteractionType(new InteractionType(cursor.getInt(cursor.getColumnIndex("interaction_type_id")), cursor.getString(cursor.getColumnIndex("type_desc"))));
             interaction.setParameters(this.getInteractionParameters(interaction));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return interaction;
     }
 
@@ -415,7 +420,6 @@ public class AgentTypeDAO {
             if (cursor.getInt(cursor.getColumnIndex("agent_state_id")) > 0) {
                 parameter.setRelatedState(this.getInteractionState(cursor.getInt(cursor.getColumnIndex("agent_state_id"))));
             }
-            
             // pegar o valor atual
             Content c = this.getCurrentContentValue(parameter);
             if (c != null) { // se c for nulo deve usar os valores iniciais, senÃ£o adiciona o conteÃºdo no estado
@@ -423,6 +427,7 @@ public class AgentTypeDAO {
             }
             parameters.add(parameter);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return parameters;
     }
 
@@ -457,6 +462,7 @@ public class AgentTypeDAO {
                 state.setContent(c);
             }
         }
+        if(!cursor.isClosed()){cursor.close();}
         return state;
     }
 
@@ -475,6 +481,7 @@ public class AgentTypeDAO {
                             Content.parseContent(state.getDataType(), cursor.getString(cursor.getColumnIndex("possible_value"))),
                             cursor.getInt(cursor.getColumnIndex("default_value")) > 0));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return possibleContents;
     }
 
@@ -489,6 +496,7 @@ public class AgentTypeDAO {
             		cursor.getInt(cursor.getColumnIndex("id")), 
             		cursor.getString(cursor.getColumnIndex("description"))));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return agentTypes;
     }
     
@@ -510,6 +518,7 @@ public class AgentTypeDAO {
             conversation.setMessages(this.getAgentMessages(conversation));
             conversations.add(conversation);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return conversations;
     }
 
@@ -532,6 +541,7 @@ public class AgentTypeDAO {
             message.setContents(this.getInteractionParameterContents(message));
             messages.add(message);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return messages;
     }
 
@@ -563,6 +573,7 @@ public class AgentTypeDAO {
             }
             interaction.setParameters(this.getInteractionParameters(interaction));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return interaction;
     }
 
@@ -586,6 +597,7 @@ public class AgentTypeDAO {
             content.setMessage(message);
             contents.add(content);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return contents;
     }
 
@@ -619,6 +631,7 @@ public class AgentTypeDAO {
             parameter.setContent(content);
             parameter.setDataType(type);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return parameter;
     }
 
@@ -684,6 +697,7 @@ public class AgentTypeDAO {
             parameter.setPossibleContents(this.getPossibleContents(parameter));
             parameters.add(parameter);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return parameters;
     }
     
@@ -702,7 +716,7 @@ public class AgentTypeDAO {
                             cursor.getString(cursor.getColumnIndex("possible_value"))), cursor
                     .getInt(cursor.getColumnIndex("default_value")) > 0));
         }
-        
+        if(!cursor.isClosed()){cursor.close();}
         return possibleContents;
     }
 }

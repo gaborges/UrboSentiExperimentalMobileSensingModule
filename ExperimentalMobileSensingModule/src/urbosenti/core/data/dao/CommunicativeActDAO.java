@@ -65,6 +65,7 @@ public class CommunicativeActDAO {
             		cursor.getString(cursor.getColumnIndex("description")), acl);
             communicativeActs.add(communicativeAct);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return communicativeActs;
     }
 }

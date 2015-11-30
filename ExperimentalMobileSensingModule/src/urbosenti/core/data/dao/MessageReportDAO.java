@@ -228,6 +228,9 @@ public class MessageReportDAO {
             message.setTarget(target);
             report.setMessage(message);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return report;
     }
     
@@ -274,6 +277,9 @@ public class MessageReportDAO {
             message.setTarget(target);
             report.setMessage(message);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return report;
     }
 
@@ -319,6 +325,9 @@ public class MessageReportDAO {
             message.setOrigin(origin);
             message.setTarget(target);
             report.setMessage(message);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return report;
     }
@@ -423,6 +432,9 @@ public class MessageReportDAO {
             message.setTarget(target);
             report.setMessage(message);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return report;
     }
 
@@ -471,6 +483,9 @@ public class MessageReportDAO {
             message.setTarget(target);
             report.setMessage(message);
             messages.add(report);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return messages;
     }
@@ -559,6 +574,9 @@ public class MessageReportDAO {
             report.setMessage(message);
             messages.add(report);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return messages;
     }
 
@@ -571,6 +589,9 @@ public class MessageReportDAO {
         if (cursor.moveToNext()) {
             returnedValue = cursor.getInt(0);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return returnedValue;
     }
 
@@ -580,7 +601,10 @@ public class MessageReportDAO {
         Cursor cursor = this.database.rawQuery(sql, null);
         if (cursor.moveToNext()) {
             return cursor.getInt(0);
-        }        
+        }      
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }  
         return 0;
     }
 

@@ -47,6 +47,30 @@
             android:text="@string/stopService" />
 
         <Button
+            android:id="@+id/btnStartServiceWithoutAdaptation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/startServiceWithoutAdaptation" />
+
+        <Button
+            android:id="@+id/btnStartEventsExperiment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/startEventsExperiment" />
+
+        <Button
+            android:id="@+id/btnDeleteDatabase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/deleteDB" />
+
+        <Button
+            android:id="@+id/btnDeleteExperimentalFiles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/deleteExperimentalFiles" />
+
+        <Button
             android:id="@+id/btnBack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

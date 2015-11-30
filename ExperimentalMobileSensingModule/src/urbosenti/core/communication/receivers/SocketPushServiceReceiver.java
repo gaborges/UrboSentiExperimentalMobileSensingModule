@@ -43,6 +43,14 @@ public class SocketPushServiceReceiver extends PushServiceReceiver {
 
     @Override
     public void stop() {
+    	try {
+    		if(serverSocket.isBound()){
+    			this.serverSocket.close();
+    		}	
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         super.stop(); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -76,6 +84,9 @@ public class SocketPushServiceReceiver extends PushServiceReceiver {
 //                    + "</message>";
 //            super.communicationManager.newPushMessage("http://exemplo:8084/TestServer/webresources/test/return", message);
             while (this.getStatus() == STATUS_LISTENING) {
+            	if(this.serverSocket == null){
+            		this.serverSocket = new ServerSocket(port);
+            	}
                 if(!serverSocket.isBound()){
                     serverSocket = new ServerSocket(port);
                     this.getInterfaceConfigurations().put("ipv4Address",InetAddress.getLocalHost().getHostAddress());
@@ -114,5 +125,5 @@ public class SocketPushServiceReceiver extends PushServiceReceiver {
         }
         return "";
     }
-
+    
 }

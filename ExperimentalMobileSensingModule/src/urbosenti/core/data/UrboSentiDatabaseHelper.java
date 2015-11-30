@@ -104,7 +104,8 @@ public abstract class UrboSentiDatabaseHelper {
     
     public abstract Object openDatabaseConnection() throws ClassNotFoundException,SQLException;
     public abstract void createDatabase() throws SQLException;
-    public abstract void dropDatabase() throws SQLException;
+    public abstract void dropDatabase() throws SQLException; 
+    public abstract void closeDatabaseConnection() throws SQLException;
     
     public Device loadingGeneralDefinitions(Object file) throws ParserConfigurationException, IOException, SAXException {
     	if(this.dBuilder == null){

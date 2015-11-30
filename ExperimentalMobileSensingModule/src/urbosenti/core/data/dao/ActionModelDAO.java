@@ -203,6 +203,7 @@ public class ActionModelDAO {
             content.setValue(Content.parseContent(parameter.getDataType(), cursor.getString(cursor.getColumnIndex("reading_value"))));
             content.setScore(cursor.getDouble(cursor.getColumnIndex("score")));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return content;
     }
 
@@ -252,6 +253,7 @@ public class ActionModelDAO {
             action.setParameters(this.getActionParameters(action));
             actions.add(action);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return actions;
     }
 
@@ -276,6 +278,7 @@ public class ActionModelDAO {
             action.setFeedbackAnswers(this.getActionFeedbackAnswers(action));
             action.setParameters(this.getActionParameters(action));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return action;
     }
 
@@ -304,6 +307,7 @@ public class ActionModelDAO {
             action.setFeedbackAnswers(this.getActionFeedbackAnswers(action));
             action.setParameters(this.getActionParameters(action));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return action;
     }
 
@@ -322,6 +326,7 @@ public class ActionModelDAO {
             answer.setDescription(cursor.getString(cursor.getColumnIndex("description")));
             answers.add(answer);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return answers;
     }
 
@@ -378,6 +383,7 @@ public class ActionModelDAO {
             parameter.setPossibleContents(this.getPossibleContents(parameter));
             parameters.add(parameter);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return parameters;
     }
 
@@ -436,6 +442,7 @@ public class ActionModelDAO {
                             this.getPossibleContents(action.getParameters()
                                     .get(0)));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return action;
     }
 
@@ -502,6 +509,7 @@ public class ActionModelDAO {
             action.setTargetComponentId(cursor.getInt(cursor.getColumnIndex("component_id")));
             actions.add(action);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return actions;
     }
 
@@ -527,6 +535,7 @@ public class ActionModelDAO {
             action.setTargetComponentId(cursor.getInt(cursor.getColumnIndex("component_id")));
             actions.add(action);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return actions;
     }
 
@@ -560,6 +569,7 @@ public class ActionModelDAO {
             action.setTargetComponentId(cursor.getInt(cursor.getColumnIndex("component_id")));
             actions.add(action);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return actions;
     }
 
@@ -593,6 +603,7 @@ public class ActionModelDAO {
             action.setTargetComponentId(cursor.getInt(cursor.getColumnIndex("component_id")));
             actions.add(action);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return actions;
     }
 
@@ -628,6 +639,7 @@ public class ActionModelDAO {
             action.setTargetComponentId(cursor.getInt(cursor.getColumnIndex("component_id")));
             actions.add(action);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return actions;
     }
 
@@ -650,6 +662,7 @@ public class ActionModelDAO {
             action.setTargetEntityId(cursor.getInt(cursor.getColumnIndex("entity_id")));
             action.setTargetComponentId(cursor.getInt(cursor.getColumnIndex("component_id")));
         }
+        if(!cursor.isClosed()){cursor.close();}
         return action;
     }
 
@@ -713,6 +726,7 @@ public class ActionModelDAO {
             parameter.setPossibleContents(this.getPossibleContents(parameter));
             parameters.add(parameter);
         }
+        if(!cursor.isClosed()){cursor.close();}
         return parameters;
     }
 }

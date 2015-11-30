@@ -10,6 +10,7 @@ import java.util.Date;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import br.ufrgs.urbosenti.android.AndroidOperationalSystemDiscovery;
@@ -197,6 +198,7 @@ public class UrboSentiService extends Service {
 						} catch (java.lang.ArrayIndexOutOfBoundsException ex) {
 							tc.test2(0, Long.parseLong(args[2]));
 						}
+						
 						break;
 					case 2: // Experimento 2 (Eventos internos):
 						// (2) quantityOfEvents, (3) quantityOfRules, (4)
@@ -307,10 +309,44 @@ public class UrboSentiService extends Service {
 						}
 						break;
 					}
-					deviceManager.stopUrboSentiServices();
-					System.out.println("Fim experimento: " + (new Date()).getTime());
-			        currentData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date());
-			        System.out.println("Fim experimento: " + currentData);					
+					if(args[1].equals("1")){
+						/*Thread t = new Thread(new Runnable() {
+							
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								long now = System.currentTimeMillis();
+								Long limit = Long.parseLong(args[2]);
+								try {
+									while(true){
+										if(System.currentTimeMillis() > (now+limit)){
+											deviceManager.stopUrboSentiServices();
+											break;
+										}
+										synchronized (limit) {
+											wait(5000);
+										}
+									}
+								} catch (NumberFormatException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} 
+								System.out.println("Fim experimento: " + (new Date()).getTime());
+								String currentData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date());
+						        System.out.println("Fim experimento: " + currentData);	
+						        Log.d("DEBUG", "Fim experimento: " + currentData);
+							}
+						});
+						t.start();*/	
+					} else {
+						deviceManager.stopUrboSentiServices();
+						System.out.println("Fim experimento: " + (new Date()).getTime());
+				        currentData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date());
+				}
+									
 				} catch (NumberFormatException e) {
 					Log.d("ERROR", e.getLocalizedMessage());
 				} catch (IOException e) {
@@ -327,8 +363,15 @@ public class UrboSentiService extends Service {
 	@Override
 	public void onDestroy() {
 		if(deviceManager.isRunning()){
+			try {
+				deviceManager.getDataManager().getDatabaseHelper().closeDatabaseConnection();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			deviceManager.stopUrboSentiServices();
 		}
 		Log.d("DEBUG", "Serviços parados");
+		super.onDestroy();
 	}
 }

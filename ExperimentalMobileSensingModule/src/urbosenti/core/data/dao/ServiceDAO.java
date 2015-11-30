@@ -82,6 +82,9 @@ public class ServiceDAO {
             service.setAgent(this.getServiceAgent(service));
             services.add(service);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return services;
     }
 
@@ -106,6 +109,9 @@ public class ServiceDAO {
             service.setAgent(this.getServiceAgent(service));
             services.add(service);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return services;
     }
 
@@ -128,6 +134,9 @@ public class ServiceDAO {
             service.setServiceType(new ServiceType(cursor.getInt(cursor.getColumnIndex("service_type_id")), cursor.getString(cursor.getColumnIndex("type_description"))));
             service.setAgent(this.getServiceAgent(service));
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return service;
     }
 
@@ -147,6 +156,9 @@ public class ServiceDAO {
             agent.setAgentType(new AgentType(cursor.getInt(cursor.getColumnIndex("agent_type_id")), cursor.getString(cursor.getColumnIndex("description"))));
             agent.setLayer(cursor.getInt(cursor.getColumnIndex("layer")));
             agent.setService(service);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return agent;
     }
@@ -180,6 +192,9 @@ public class ServiceDAO {
             service.setApplicationUID((cursor.getString(cursor.getColumnIndex("application_uid")).length() <= 6) ? "" : cursor.getString(cursor.getColumnIndex("application_uid")));
             service.setServiceType(new ServiceType(cursor.getInt(cursor.getColumnIndex("service_type_id")), cursor.getString(cursor.getColumnIndex("type_description"))));
             service.setAgent(this.getServiceAgent(service));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return service;
     }

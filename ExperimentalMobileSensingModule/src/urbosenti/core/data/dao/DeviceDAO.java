@@ -5,11 +5,7 @@
  */
 package urbosenti.core.data.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -98,6 +94,10 @@ public final class DeviceDAO {
         Cursor cursor = this.database.rawQuery("SELECT count(*) FROM devices;", null);
         if (cursor.moveToFirst()) {
             count = cursor.getInt(0);
+
+            if(!cursor.isClosed()){
+            	cursor.close();
+            }
         } else {
             throw new SQLException("Query failed to return the row counting.");
         }
@@ -110,6 +110,10 @@ public final class DeviceDAO {
         		new String[]{(device.getId() > 0) ? String.valueOf(device.getId()) : "1"});
         if (cursor.moveToFirst()) {
             count = cursor.getDouble(0);
+
+            if(!cursor.isClosed()){
+            	cursor.close();
+            }
         } else {
             throw new SQLException("Query failed to return the row value.");
         }
@@ -122,6 +126,10 @@ public final class DeviceDAO {
         		new String[]{(device.getId() > 0) ? String.valueOf(device.getId()) : "1"});
         if (cursor.moveToFirst()) {
             count = cursor.getDouble(0);
+
+            if(!cursor.isClosed()){
+            	cursor.close();
+            }
         } else {
             throw new SQLException("Query failed to return the row value.");
         }
@@ -134,6 +142,7 @@ public final class DeviceDAO {
         		new String[]{(device.getId() > 0) ? String.valueOf(device.getId()) : "1"});
         if (cursor.moveToFirst()) {
             count = cursor.getDouble(0);
+            cursor.close();
         } else {
             throw new SQLException("Query failed to return the row value.");
         }
@@ -152,6 +161,9 @@ public final class DeviceDAO {
             device.setAgentModelVersion(cursor.getDouble(cursor.getColumnIndex("agentModelVersion")));
             device.setDeviceVersion(cursor.getDouble(cursor.getColumnIndex("deviceVersion")));
             device.setGeneralDefinitionsVersion(cursor.getDouble(cursor.getColumnIndex("generalDefinitionsVersion")));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return device;
     }
@@ -207,6 +219,9 @@ public final class DeviceDAO {
             entity.setEntityType(type);
             entity.setStateModels(this.dataManager.getStateDAO().getEntityStateModels(entity));
             deviceComponent.getEntities().add(entity);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return deviceComponent;
     }

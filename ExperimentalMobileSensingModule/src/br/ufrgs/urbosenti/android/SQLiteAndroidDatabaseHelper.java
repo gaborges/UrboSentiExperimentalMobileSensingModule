@@ -463,5 +463,12 @@ public class SQLiteAndroidDatabaseHelper extends UrboSentiDatabaseHelper {
         db.execSQL("DROP TABLE \"main\".\"generated_events\";\n");
         db.execSQL("DROP TABLE \"main\".\"generated_actions\";");
     }
+    
+    @Override
+	public void closeDatabaseConnection() throws SQLException {
+		if(this.db.isOpen()){
+			this.db.close();
+		}
+	}
 
 }

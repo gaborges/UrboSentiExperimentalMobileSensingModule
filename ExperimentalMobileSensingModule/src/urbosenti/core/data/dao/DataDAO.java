@@ -52,6 +52,7 @@ public class DataDAO {
             entity.setStateModels(this.dataManager.getEntityStateDAO().getEntityStateModels(entity));
             deviceComponent.getEntities().add(entity);
         }
+        cursor.close();
         return deviceComponent;
     }
 }

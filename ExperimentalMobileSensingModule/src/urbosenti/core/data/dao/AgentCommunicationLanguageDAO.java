@@ -95,6 +95,7 @@ public class AgentCommunicationLanguageDAO {
 					cursor.getString(cursor.getColumnIndex("description")));
 			acls.add(acl);
 		}
+        if(!cursor.isClosed()){cursor.close();}
 		return acls;
 	}
 

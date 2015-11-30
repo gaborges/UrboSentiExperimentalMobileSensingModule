@@ -126,6 +126,9 @@ public class EntityStateDAO {
             }
             states.add(state);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return states;
     }
 
@@ -164,6 +167,9 @@ public class EntityStateDAO {
                 state.setContent(c);
             }
             states.add(state);
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return states;
     }
@@ -204,6 +210,9 @@ public class EntityStateDAO {
             }
             states.add(state);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return states;
     }
 
@@ -221,6 +230,9 @@ public class EntityStateDAO {
                             cursor.getInt(cursor.getColumnIndex("id")),
                             Content.parseContent(state.getDataType(), cursor.getString(cursor.getColumnIndex("possible_value"))),
                             cursor.getInt(cursor.getColumnIndex("default_value")) > 0));
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return possibleContents;
     }
@@ -244,7 +256,10 @@ public class EntityStateDAO {
                 i.setId(cursor.getInt(cursor.getColumnIndex("monitored_user_instance_id")));
                 content.setMonitoredInstance(i);
             }
-        }   
+        }  
+        if(!cursor.isClosed()){
+        	cursor.close();
+        } 
         return content;
     }
 
@@ -304,6 +319,9 @@ public class EntityStateDAO {
                 state.setContent(c);
             }
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return state;
     }
 
@@ -345,6 +363,9 @@ public class EntityStateDAO {
             if (c != null) { // se c for nulo deve usar os valores iniciais, senão adiciona o conteúdo no estado
                 state.setContent(c);
             }
+        }
+        if(!cursor.isClosed()){
+        	cursor.close();
         }
         return state;
     }
@@ -405,6 +426,9 @@ public class EntityStateDAO {
             }
             states.add(state);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return states;
     }
     
@@ -429,6 +453,9 @@ public class EntityStateDAO {
             content.setValue(Content.parseContent(state.getDataType(), cursor.getString(cursor.getColumnIndex("reading_value"))));
             content.setMonitoredInstance(instance);
         }   
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return content;
     }
 

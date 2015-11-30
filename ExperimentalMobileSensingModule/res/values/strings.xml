@@ -21,4 +21,12 @@
     
     <string name="startService">Start Service</string>
     
+    <string name="deleteDB">Delete Database</string>
+    
+    <string name="deleteExperimentalFiles">Delete Experimental Files</string>
+    
+    <string name="startServiceWithoutAdaptation">Start Service without Adaptation</string>
+    
+    <string name="startEventsExperiment">Start Experiment of Events</string>
+    
 </resources>

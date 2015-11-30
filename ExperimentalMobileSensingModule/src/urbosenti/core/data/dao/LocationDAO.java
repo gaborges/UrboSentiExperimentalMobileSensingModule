@@ -52,6 +52,9 @@ public class LocationDAO {
             entity.setStateModels(this.dataManager.getEntityStateDAO().getEntityStateModels(entity));
             deviceComponent.getEntities().add(entity);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return deviceComponent;
     }
 }

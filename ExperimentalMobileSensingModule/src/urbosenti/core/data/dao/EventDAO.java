@@ -54,6 +54,9 @@ public final class EventDAO {
             entity.setStateModels(this.dataManager.getEntityStateDAO().getEntityStateModels(entity));
             deviceComponent.getEntities().add(entity);
         }
+        if(!cursor.isClosed()){
+        	cursor.close();
+        }
         return deviceComponent;
     }
      
