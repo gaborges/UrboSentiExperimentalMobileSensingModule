@@ -210,6 +210,7 @@ public class TestManager extends ComponentManager implements Runnable {
         HashMap<String, Object> values;
         this.eventLimit = quantityOfInteractions;
         this.writer.write((fistDate.getTime()+"\n").getBytes());
+        // evento modelo
         this.continuousEvent = new SystemEvent(this);
         this.continuousEvent.setId(EVENT_START_INTERACTION);
         this.continuousEvent.setName("Continuos interaction event!");
@@ -222,8 +223,23 @@ public class TestManager extends ComponentManager implements Runnable {
         values.put("uid", "any");
         this.continuousEvent.setParameters(values);
         this.continuousEvent.setEntityId(ENTITY_TEST_ENTITY);
+        // evento gerado
+        Event e = new SystemEvent(this);
+        e.setId(EVENT_START_INTERACTION);
+        e.setName("Continuos interaction event!");
+        e.setTime(this.continuousEvent.getTime());
+        //HashMap<String,Object> values2 = new HashMap<String, Object>(this.continuousEvent.getParameters());
+        /*values.put("ip", new String((String)e.getParameters().get("ip")));
+        int value = Integer.valueOf((Integer)e.getParameters().get("port"));
+		values.put("port", value);
+        values.put("rules", Integer.valueOf((Integer)e.getParameters().get("rules")));
+        values.put("conditions", Integer.valueOf((Integer)e.getParameters().get("ip")));
+        values.put("uid", "any");*/
+        e.setParameters(new HashMap<String, Object>(this.continuousEvent.getParameters()));
+        e.setEntityId(ENTITY_TEST_ENTITY);
         this.interactionMode = 1;
-        this.deviceManager.getEventManager().newEvent(continuousEvent);
+        this.deviceManager.getEventManager().newEvent(e);
+        //this.deviceManager.getEventManager().newEvent(continuousEvent);
     }
 
     public void stopAgents(List<String> ips, List<Integer> ports) {
@@ -274,7 +290,7 @@ public class TestManager extends ComponentManager implements Runnable {
         switch (action.getId()) {
             case ACTION_GENERIC_ACTION:
 
-                event = (Event) action.getParameters().get("event");
+                //event = (Event) action.getParameters().get("event");
                 try {
                     //tempoevento,id evento,tempoacao
                     //this.writer.write(event.getTime().getTime() + "," + event.getId() + "," + (new Date()).getTime() + "\n");
@@ -283,7 +299,7 @@ public class TestManager extends ComponentManager implements Runnable {
                     if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                         Logger.getLogger(TestManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 }
                 break;
             case ACTION_INTERACTION_RESULT:
@@ -297,7 +313,29 @@ public class TestManager extends ComponentManager implements Runnable {
                     if(this.interactionMode==1){
                         if (this.eventCount < this.eventLimit) {
 //                            System.out.println("lalala");
-                            this.deviceManager.getEventManager().newEvent(continuousEvent);
+                        	/*
+                        	Event e = this.continuousEvent;
+                        	this.continuousEvent = new SystemEvent(this);
+                            this.continuousEvent.setId(EVENT_START_INTERACTION);
+                            this.continuousEvent.setName("Continuos interaction event!");
+                            this.continuousEvent.setTime(e.getTime());
+                            HashMap<String,Object> values = new HashMap<String, Object>(e.getParameters());
+                            values.put("ip", new String((String)e.getParameters().get("ip")));
+                            int value = Integer.valueOf((Integer)e.getParameters().get("port"));
+							values.put("port", value);
+                            values.put("rules", Integer.valueOf((Integer)e.getParameters().get("rules")));
+                            values.put("conditions", Integer.valueOf((Integer)e.getParameters().get("ip")));
+                            values.put("uid", "any");
+                            this.continuousEvent.setParameters(values);
+                            this.continuousEvent.setEntityId(ENTITY_TEST_ENTITY);*/
+                        	// evento gerado
+                            event = new SystemEvent(this);
+                            event.setId(EVENT_START_INTERACTION);
+                            event.setName("Continuos interaction event!");
+                            event.setTime(this.continuousEvent.getTime());
+                            event.setParameters(new HashMap<String, Object>(this.continuousEvent.getParameters()));
+                            event.setEntityId(ENTITY_TEST_ENTITY);
+                            this.deviceManager.getEventManager().newEvent(event);
                         } else {
 ////                            System.out.println("Como chegou aquiii -----------------");
 //                            this.stopAgent(action.getParameters().get("ip").toString(), 
@@ -309,7 +347,7 @@ public class TestManager extends ComponentManager implements Runnable {
                     if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                         Logger.getLogger(TestManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 }
                 break;
             case ACTION_SHUTDOWN:
@@ -346,12 +384,12 @@ public class TestManager extends ComponentManager implements Runnable {
 //                }
 //                break;
             default:
-                answer = new FeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
+                answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
                 break;
         }
         // verifica se a ação existe ou se houve algum resultado durante a execução
         if (action.getId() >= 1 && action.getId() <= 3) {
-            answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL);
+            answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL);
         }
         return answer;
     }

@@ -12,7 +12,7 @@ import java.util.HashMap;
  * @author Guilherme
  */
 public class Change {
-    private final Integer id;
+    private final int id;
     private final HashMap<String,Object> parameters;
 
     public Change(Integer id, HashMap<String, Object> parameters) {

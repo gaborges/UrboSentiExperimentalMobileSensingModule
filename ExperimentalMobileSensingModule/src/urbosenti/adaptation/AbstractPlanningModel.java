@@ -28,17 +28,18 @@ public abstract class AbstractPlanningModel {
     public Plan planning(Diagnosis diagnosis, AbstractDiagnosisModel diagnosisModel) {
         // cria um novo plano se o antigo continha um plano elaborado
         if (this.plan.getExecutionPlans().size() > 0) {
-            this.plan = new Plan();
+        	this.plan.getExecutionPlans().clear();
+            //this.plan = new Plan();
         }
-        // se for vazio o plano √© retornado vazio
+        // se for vazio o plano È retornado vazio
         if (diagnosis.getChanges().isEmpty()) {
             return plan;
         }
-        // para cada mudan√ßa verificar a mudan√ßa
+        // para cada mudanÁa verificar a mudanÁa
         for (Change change : diagnosis.getChanges()) {
-            // retorna o plano de a√ß√£o para cada mundan√ßa
+            // retorna o plano de aÁ„o para cada mundanÁa
             this.executionPlan = this.getExecutionPlan(change, plan, adaptationDAO, diagnosisModel);
-            // verifica se √© nulo, se n√£o for adiciona
+            // verifica se È nulo, se n„o for adiciona
             if (executionPlan != null) {
                 plan.addExecutionPlan(executionPlan);
             }

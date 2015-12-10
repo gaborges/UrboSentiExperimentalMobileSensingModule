@@ -496,9 +496,9 @@ public final class DeviceManager extends ComponentManager implements BaseCompone
         }
         // verifica se a ação existe ou se houve algum resultado durante a execução
         if (answer == null && action.getId() >= 1 && action.getId() <= 3) {
-            answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL);
+            answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL);
         } else if (answer == null) {
-            answer = new FeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
+            answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
         }
         return answer;
     }
@@ -533,13 +533,13 @@ public final class DeviceManager extends ComponentManager implements BaseCompone
         HashMap<String, Object> values;
         switch (eventId) {
             case EVENT_DEVICE_REGISTRATION_SUCCESSFUL:
-                // Parâmetros do evento
-                values = new HashMap();
-                values.put("uid", params[0]);
-                values.put("expirationTime", params[1]);
-
+               
                 // Se o tratador de eventos de sistema estiver ativo gera um evento para ele também
                 if (adaptationManager != null) {
+                	 // Parâmetros do evento
+                    values = new HashMap();
+                    values.put("uid", params[0]);
+                    values.put("expirationTime", params[1]);
                     // Cria o evento de sistema
                     event = new SystemEvent(this);
                     event.setId(1);
@@ -551,14 +551,17 @@ public final class DeviceManager extends ComponentManager implements BaseCompone
                     // envia o evento
                     getEventManager().newEvent(event);
                 }
-
+                // Parâmetros do evento
+                values = new HashMap();
+                values.put("uid", params[0]);
+                values.put("expirationTime", params[1]);
                 // Cria o evento de aplicação, alertando a aplicação
                 event = new ApplicationEvent(this);
                 event.setId(1);
                 event.setName("Registro efetuado com sucesso");
                 event.setTime(new Date());
                 event.setParameters(values);
-
+                event.setEntityId(DeviceDAO.ENTITY_ID_OF_SERVICE_REGISTRATION);
                 // envia o evento
                 getEventManager().newEvent(event);
 
@@ -675,6 +678,7 @@ public final class DeviceManager extends ComponentManager implements BaseCompone
             if (this.isSensingModuleRegistred(backendServer)) {
                 return true;
             }
+
             // busca as informações do dispositivo
             Entity entity = this.dataManager.getEntityDAO().getEntity(
                     DeviceDAO.COMPONENT_ID,
@@ -762,7 +766,6 @@ public final class DeviceManager extends ComponentManager implements BaseCompone
             StringWriter stw = new StringWriter();
             Transformer serializer = TransformerFactory.newInstance().newTransformer();
             serializer.transform(new DOMSource(root), new StreamResult(stw));
-
             Address serviceAddress = new Address(backendServer.getAddress());
             if (backendServer.getServiceUID().length() > 0) {
                 serviceAddress.setUid(backendServer.getServiceUID());
@@ -778,6 +781,7 @@ public final class DeviceManager extends ComponentManager implements BaseCompone
             doc = builder.parse(new InputSource(new StringReader(response)));
             Element registry = doc.getDocumentElement();
             // Adicio a as informações nas respectivas variáveis
+            System.out.println("UID dentro do lugar 000: "+registry.getElementsByTagName("applicationUid").item(0).getTextContent());
             backendServer.setApplicationUID(registry.getElementsByTagName("applicationUid").item(0).getTextContent());
             backendServer.setServiceUID(registry.getElementsByTagName("serviceUid").item(0).getTextContent());
             String password = registry.getElementsByTagName("password").item(0).getTextContent();
@@ -805,6 +809,7 @@ public final class DeviceManager extends ComponentManager implements BaseCompone
             }
             // atualiza as configurações do servidor
             this.dataManager.getServiceDAO().updateServiceUIDs(backendServer);
+            System.out.println("UID dentro do lugar 111: "+backendServer.getApplicationUID());
             // gera o evento
             this.newInternalEvent(EVENT_DEVICE_REGISTRATION_SUCCESSFUL, backendServer.getApplicationUID(), expirationTime);
             // retorna true
@@ -1238,7 +1243,6 @@ public final class DeviceManager extends ComponentManager implements BaseCompone
         if (!isRunning) {
             // Cria as threads
             Thread systemHandler = new Thread(adaptationManager);
-
             /**
              * *** Configurações necessárias para os componentes ****
              */

@@ -1,8 +1,10 @@
 package br.ufrgs.urbosenti;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,6 +19,7 @@ import br.ufrgs.urbosenti.android.AndroidOperationalSystemDiscovery;
 import br.ufrgs.urbosenti.android.ConcreteApplicationHandler;
 import br.ufrgs.urbosenti.android.AndroidGeneralCommunicationInterface;
 import br.ufrgs.urbosenti.android.SQLiteAndroidDatabaseHelper;
+import br.ufrgs.urbosenti.android.SocketAndroidGeneralCommunicationInterface;
 import br.ufrgs.urbosenti.test.TestCommunication;
 import br.ufrgs.urbosenti.test.TestECADiagnosisModel;
 import br.ufrgs.urbosenti.test.TestManager;
@@ -81,7 +84,15 @@ public class UrboSentiService extends Service {
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		args = intent.getStringArrayExtra("args");
+		if(intent != null){
+			if(intent.getStringArrayExtra("args") != null)
+				args = intent.getStringArrayExtra("args");
+			else{
+				args = new String[]{ "55666", "1", "43200000", "10000", "yes" }; // 12h
+			}
+		}else{
+			args = new String[]{ "55666", "1", "43200000", "10000", "yes" }; // 12h
+		}
 		for(String a : args){
 			Log.d("ARG",a);
 		}
@@ -129,7 +140,8 @@ public class UrboSentiService extends Service {
 
 		// Adicionar as interfaces de comunicação suportadas --- Inicialmente
 		// manual. Após adicionar um processo automático
-		deviceManager.addSupportedCommunicationInterface(new AndroidGeneralCommunicationInterface(getBaseContext()));
+		//deviceManager.addSupportedCommunicationInterface(new AndroidGeneralCommunicationInterface(getBaseContext()));
+		deviceManager.addSupportedCommunicationInterface(new SocketAndroidGeneralCommunicationInterface(getBaseContext()));
 		ConcreteApplicationHandler handler = new ConcreteApplicationHandler(deviceManager);
 		deviceManager.getEventManager().subscribe(handler);
 		PushServiceReceiver teste = new SocketPushServiceReceiver(deviceManager.getCommunicationManager(),Integer.parseInt(args[0]));
@@ -153,7 +165,7 @@ public class UrboSentiService extends Service {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			Log.d("Error", "IO: " + e.getMessage());
+			Log.d("Error", "IO: " + e.getLocalizedMessage());
 		}
 		deviceManager.onCreate();
 		Log.d("DEBUG", "onCreateCompletado");
@@ -170,10 +182,11 @@ public class UrboSentiService extends Service {
 						 */
 						deviceManager.startUrboSentiServices();
 					} catch (IOException ex) {
-						Log.d("Error", ex.getLocalizedMessage());
+						Log.d("Error: ", ex.getLocalizedMessage());
 						System.exit(-1);
 					} catch (SQLException ex) {
-						Log.d("Error", ex.getMessage());
+						Log.d("Error: ", ex.getLocalizedMessage());
+						System.exit(-1);
 					}
 					Log.d("DEBUG", "inicialização dos serviços da urbosenti completado");
 					System.out.println("Início experimento: " + (new Date()).getTime());
@@ -214,7 +227,7 @@ public class UrboSentiService extends Service {
 							// ou 2);
 						if (args[2].equals("1")) {
 							// modo de operação 1 (Escutador): nenhum parâmetro
-							testManager.waitExperiment();
+							//testManager.waitExperiment();
 						} else if (args[2].equals("2")) { // modo de operação 2
 															// (Envia
 															// mensagens):
@@ -229,20 +242,15 @@ public class UrboSentiService extends Service {
 							// por porta e ip
 							ArrayList<String> ips = new ArrayList();
 							ArrayList<Integer> ports = new ArrayList<Integer>();
-							FileReader agentAddresses = new FileReader(args[7]); // (6)
-																					// arquivo
-																					// de
-																					// lista
-																					// de
-																					// ips;
-							BufferedReader br = new BufferedReader(agentAddresses);
+							 // (7) arquivo de lista de ips;
+							BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open(args[7])));
 							String s, ss[];
 							while ((s = br.readLine()) != null) {
 								ss = s.split(":");
 								ips.add(ss[0]);
 								ports.add(Integer.parseInt(ss[1]));
 							}
-							agentAddresses.close();
+							br.close();
 							for (int i = 0; i < ips.size(); i++) {
 								testManager.startExperimentOfContinuosInteractionEvents(Integer.parseInt(args[3]), // quantityOfInteractions,
 										Integer.parseInt(args[4]), // quantityOfRules,
@@ -345,6 +353,7 @@ public class UrboSentiService extends Service {
 						deviceManager.stopUrboSentiServices();
 						System.out.println("Fim experimento: " + (new Date()).getTime());
 				        currentData = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format(new Date());
+				        System.out.println("Fim experimento: " + currentData);	
 				}
 									
 				} catch (NumberFormatException e) {
@@ -363,12 +372,12 @@ public class UrboSentiService extends Service {
 	@Override
 	public void onDestroy() {
 		if(deviceManager.isRunning()){
-			try {
+			/*try {
 				deviceManager.getDataManager().getDatabaseHelper().closeDatabaseConnection();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 			deviceManager.stopUrboSentiServices();
 		}
 		Log.d("DEBUG", "Serviços parados");

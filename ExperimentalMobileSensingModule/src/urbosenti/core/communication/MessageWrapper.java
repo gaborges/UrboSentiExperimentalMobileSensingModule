@@ -5,19 +5,11 @@
 package urbosenti.core.communication;
 
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.util.Date;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
 
 /**
  *
@@ -31,10 +23,10 @@ public class MessageWrapper implements Serializable  {
     private String envelopedMessage;
     private Date createdTime;
     private Date sentTime;
-    private boolean checked; // Se foi checada pela aplica√ß√£o
+    private boolean checked; // Se foi checada pela aplica√ß„o
     private boolean sent;
     private long serviceProcessingTime;
-    // Crit√©rios utilizados para avalia√ß√£o ao enviar a mensagem
+    // CritÈrios utilizados para avalia√ß„o ao enviar a mensagem
     private int size; // number of characters
     private long responseTime; // milliseconds
     private CommunicationInterface usedCommunicationInterface;
@@ -119,8 +111,8 @@ public class MessageWrapper implements Serializable  {
     public void setSentTime(Date sentTime) {
         this.sentTime = sentTime;
     }
-
-    void build() throws ParserConfigurationException, TransformerConfigurationException, TransformerException {
+    /*
+    void build2() throws ParserConfigurationException, TransformerConfigurationException, TransformerException {
         // se a mensagem for usar o envelope.
         if (message.isUsesUrboSentiXMLEnvelope()) {
             // gerar mensagem em XML
@@ -145,7 +137,7 @@ public class MessageWrapper implements Serializable  {
             root.setAttribute("requireResponse", String.valueOf(message.isRequireResponse()));
 
             // origin
-            if (Message.SUBJECT_REGISTRATION != message.getSubject()) { // Se for para registro n√£o h√° UID de origem
+            if (Message.SUBJECT_REGISTRATION != message.getSubject()) { // Se for para registro n„o h· UID de origem
                 uid.setTextContent(message.getOrigin().getUid());
                 layer.setTextContent(message.getOrigin().getLayer().toString());
                 origin.appendChild(uid);
@@ -153,7 +145,7 @@ public class MessageWrapper implements Serializable  {
                 header.appendChild(origin);
             }
             // target
-            if (Message.SUBJECT_REGISTRATION != message.getSubject()) { // Se for para registro n√£o h√° UID do alvo
+            if (Message.SUBJECT_REGISTRATION != message.getSubject()) { // Se for para registro n„o h· UID do alvo
                 layer = doc.createElement("layer");
                 uid = doc.createElement("uid");
                 uid.setTextContent(message.getTarget().getUid());
@@ -195,6 +187,53 @@ public class MessageWrapper implements Serializable  {
 
         this.size = (this.envelopedMessage.length());
         this.createdTime = new Date();
+    }
+*/
+    void build() throws ParserConfigurationException, TransformerConfigurationException, TransformerException {
+        // se a mensagem for usar o envelope.
+        if (message.isUsesUrboSentiXMLEnvelope()) {
+            // gerar mensagem em XML
+            // Criar o documento e com verte a String em DOC
+            //RootElement root = new RootElement("message");
+            
+            String mensagem = "<message requireResponse=\""+String.valueOf(message.isRequireResponse())+"\" >"+  // atributo requireResponse
+			"<header>";
+		         // origin
+			if (Message.SUBJECT_REGISTRATION != message.getSubject()) { // Se for para registro n„o h· UID de origem
+		        mensagem = mensagem + 
+		        	"<origin>"+
+			        	"<uid>"+message.getOrigin().getUid()+"</uid>"+
+			        	"<layer>"+message.getOrigin().getLayer().toString()+"</layer>"+
+		       		"</origin>";
+		    }
+			// target
+		    if (Message.SUBJECT_REGISTRATION != message.getSubject()) { // Se for para registro n„o h· UID do alvo
+		    	mensagem = mensagem + 
+					"<target>" +
+				    	"<uid>"+message.getTarget().getUid()+"</uid>"+
+				    	"<layer>"+String.valueOf(message.getTarget().getLayer().toString())+"</layer>" +
+					"</target>";
+		    }
+		    mensagem = mensagem +
+					"<priority>"+String.valueOf(message.getPriority())+"</priority>"+
+					"<subject>"+String.valueOf(message.getSubject())+"</subject>"+
+					"<contentType>"+message.getContentType()+"</contentType>"+
+					"<contentSize>"+String.valueOf(message.getContent().length())+"</contentSize>"+
+					"<anonymousUpload>"+message.isAnonymousUpload().toString()+"</anonymousUpload>"+
+				"</header>"+
+				"<content>"+message.getContent()+"</content>"+
+			"</message>";
+            this.envelopedMessage = mensagem;
+        } else {
+            this.envelopedMessage = message.getContent();
+        }
+
+        this.size = (this.envelopedMessage.length());
+        this.createdTime = new Date();
+    }
+    
+    public void cleanEnvelopedMessage(){
+    	this.envelopedMessage = "";
     }
 
     public static MessageWrapper createAndBuild(Message m) throws ParserConfigurationException, TransformerConfigurationException, TransformerException {

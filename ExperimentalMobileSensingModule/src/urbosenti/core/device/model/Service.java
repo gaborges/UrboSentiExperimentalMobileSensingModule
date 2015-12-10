@@ -4,11 +4,11 @@ public class Service {
 
     private int id;
     /**
-     * ID do serviï¿½o
+     * ID do serviço
      */
     private String serviceUID;
     /**
-     * ID dado pelo serviï¿½o para o dispositivo
+     * ID dado pelo serviço para o dispositivo
      */
     private String applicationUID;
     private String description;

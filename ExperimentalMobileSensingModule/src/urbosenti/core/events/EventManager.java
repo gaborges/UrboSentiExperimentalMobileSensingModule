@@ -261,15 +261,15 @@ public class EventManager extends ComponentManager {
                     }
                 }
                 if (flag == false) {
-                    action.setFeedbackAnswer(new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED_TIMEOUT));
+                    action.setFeedbackAnswer(FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED_TIMEOUT));
                 }
                 break;
         }
         // verifica se a ação existe ou se houve algum resultado durante a execução
         if (action.getFeedbackAnswer() == null && action.getId() >= 1 && action.getId() <= 3) {
-            action.setFeedbackAnswer(new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL));
+            action.setFeedbackAnswer(FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL));
         } else if (action.getFeedbackAnswer() == null) {
-            action.setFeedbackAnswer(new FeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST));
+            action.setFeedbackAnswer(FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST));
         }
         return action.getFeedbackAnswer();
     }

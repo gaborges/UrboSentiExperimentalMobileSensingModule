@@ -91,7 +91,7 @@ public abstract class CommunicationInterface<Object> implements InstanceRepresen
         messageWrapper.setResponseTime(finalTime.getTime() - initialTime.getTime());
         messageWrapper.setSent(true);
         messageWrapper.setUsedCommunicationInterface(this);
-        // Adiciona a latência média se naõ for a primeira vez
+        // Adiciona a lat�ncia m�dia se n�o for a primeira vez
         if(this.getAverageResponseTime() > 0){
             this.setAverageResponseTime((this.getAverageResponseTime() + messageWrapper.getResponseTime())/2);
         }else{
@@ -104,7 +104,7 @@ public abstract class CommunicationInterface<Object> implements InstanceRepresen
         messageWrapper.setResponseTime(responseTime);
         messageWrapper.setSent(true);
         messageWrapper.setUsedCommunicationInterface(this);
-        // Adiciona a latência média se naõ for a primeira vez
+        // Adiciona a lat�ncia m�dia se n�o for a primeira vez
         if(this.getAverageResponseTime() > 0){
             this.setAverageResponseTime((this.getAverageResponseTime() + messageWrapper.getResponseTime())/2);
         }else{
@@ -168,7 +168,7 @@ public abstract class CommunicationInterface<Object> implements InstanceRepresen
     
     /**
      * 
-     * @return retorna true se foi suportada pelo sistema senão retorna false; OBS.: o Desenvolvedor deve definir é é possível ou não utilizá-la por implementação
+     * @return retorna true se foi suportada pelo sistema senão retorna false; OBS.: o Desenvolvedor deve definir � possível ou não utilizá-la por implementação
      * @throws IOException
      * @throws UnsupportedOperationException 
      */    

@@ -17,6 +17,7 @@ import org.xml.sax.InputSource;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import urbosenti.adaptation.AdaptationManager;
 import urbosenti.adaptation.ExecutionPlan;
 import urbosenti.core.communication.Address;
@@ -102,14 +103,14 @@ public final class AdaptationDAO {
             agentType.setInteractionModels(dataManager.getAgentTypeDAO().getAgentInteractions(agentType));
             agentType.setStateModels(dataManager.getAgentTypeDAO().getAgentStates(agentType));
         }
-        // Busca todos os Acls para serem usados em mem√≥ria
+        // Busca todos os Acls para serem usados em memÛria
         this.populateAcls();
     }
 
     /**
-     * Recebe um evento por par√¢metro, persiste no banco de dados o valor e
+     * Recebe um evento por par‚metro, persiste no banco de dados o valor e
      * returna o correspendente do evento entre InteractionModel ou EventModel.
-     * Se n√£o encontrar nenhum retorna null
+     * Se n„o encontrar nenhum retorna null
      *
      * @param event
      * @return
@@ -122,28 +123,28 @@ public final class AdaptationDAO {
          * ************** Update world model **************
          */
         // verifica se È uma interaÁ„o ou um evento
-        // se uma interaÁ„o extrai a interaÁ„o dos par√¢metros do evento
-        // de forma semelhante ao evento salva as informa√ß√µes
-        // gera uma interaÁ„o que È passada para an√°lise -- o mesmo ocorre com o evento
+        // se uma interaÁ„o extrai a interaÁ„o dos par‚metros do evento
+        // de forma semelhante ao evento salva as informaÁıes
+        // gera uma interaÁ„o que È passada para an·lise -- o mesmo ocorre com o evento
         // buscar o modelo de evento
         eventModel = this.getEventModel(event);
-        // se n√£o encontrar o evento
+        // se n„o encontrar o evento
         if (eventModel == null) {
-            // gera um evento de evento desconhecido ou n√£o existente e adiciona os dados do evento n√£o reconecido nos par√¢metros
-            throw new NullPointerException("Evento " + event.getId() + " " + event.getName() + " " + event.toString() + "n√£o existe no banco de dados!");
+            // gera um evento de evento desconhecido ou n„o existente e adiciona os dados do evento n„o reconecido nos par‚metros
+            throw new NullPointerException("Evento " + event.getId() + " " + event.getName() + " " + event.toString() + "n„o existe no banco de dados!");
         } else {  // caso encontre
-            // adiciona o id o BD, se for necess√°rio armazenar ent√£o usa o gerado pelo banco de dados
+            // adiciona o id o BD, se for necess·rio armazenar ent„o usa o gerado pelo banco de dados
             event.setDatabaseId(eventModel.getId());
             // verificar se o modelo de evento precisa ser salvo
             //if (eventModel.isNecessaryStore()) {
             // salvar se sim
             this.dataManager.getEventModelDAO().insert(event, eventModel);
             //}
-            // verificar cada par√¢metro, se relacionado a um estado 
+            // verificar cada par‚metro, se relacionado a um estado 
             for (Parameter p : eventModel.getParameters()) {
-                // se relacionado verifica se È um estado de inst√¢ncia
+                // se relacionado verifica se È um estado de inst‚ncia
                 if (p.getRelatedState() != null) {
-                    // preenche o conte√∫do
+                    // preenche o conte˙do
                     if (content == null) {
                         content = new Content(Content.parseContent(
                                 p.getRelatedState().getDataType(),
@@ -154,12 +155,12 @@ public final class AdaptationDAO {
                                 p.getRelatedState().getDataType(), event.getParameters().get(p.getLabel())));
                         content.setTime(event.getTime());
                     }
-                    // se for estado de inst√¢ncia acessa o par√¢metro instanceId e salva na referida inst√¢ncia, sen√£o salva no estado
+                    // se for estado de inst‚ncia acessa o par‚metro instanceId e salva na referida inst‚ncia, sen„o salva no estado
                     if (p.getRelatedState().isStateInstance()) {
-                        //--- Testar se e uma instancia ou uma InstanceRepresentative, se n√£o for, indica erro, para ficar genÈrico
-                        //--- colocar todos os r√≥tulos de inst√¢ncia como instance
-                        // Existem 3 inst√¢ncias - User, CommunicationInterface e PushServiceReceiver
-                        // TambÈm aceitar que o par√¢metro instance tenha uma inst√¢ncia
+                        //--- Testar se e uma instancia ou uma InstanceRepresentative, se n„o for, indica erro, para ficar genÈrico
+                        //--- colocar todos os rÛtulos de inst‚ncia como instance
+                        // Existem 3 inst‚ncias - User, CommunicationInterface e PushServiceReceiver
+                        // TambÈm aceitar que o par‚metro instance tenha uma inst‚ncia
                         if (event.getComponentManager().getComponentId() == CommunicationDAO.COMPONENT_ID) {
                             if (event.getParameters().get("interface") instanceof CommunicationInterface) {
                                 for (State instanceState : ((CommunicationInterface) event.getParameters().get("interface")).getInstance().getStates()) {
@@ -215,11 +216,11 @@ public final class AdaptationDAO {
                 event = this.extractInteractionFromMessageEvent(event);
                 // get Interaction model
                 interactionModel = this.getInteractionModel(event);
-                // verificar cada par√¢metro, se relacionado a um estado 
+                // verificar cada par‚metro, se relacionado a um estado 
                 for (Parameter p : interactionModel.getParameters()) {
-                    // se relacionado verifica se È um estado de inst√¢ncia
+                    // se relacionado verifica se È um estado de inst‚ncia
                     if (p.getRelatedState() != null) {
-                        // se for salva como estado de inst√¢ncia
+                        // se for salva como estado de inst‚ncia
                         p.getRelatedState().setContent(
                                 new Content(Content.parseContent(
                                                 p.getRelatedState().getDataType(),
@@ -237,7 +238,7 @@ public final class AdaptationDAO {
         if (this.eventModel != null) {
             return eventModel;
         }
-        throw new NullPointerException("Evento " + event.getId() + " " + event.getName() + " " + event.toString() + "n√£o existe no banco de dados!");
+        throw new NullPointerException("Evento " + event.getId() + " " + event.getName() + " " + event.toString() + "n„o existe no banco de dados!");
     }
 
     public void populateAcls() throws SQLException {
@@ -280,13 +281,13 @@ public final class AdaptationDAO {
     }
 
     /**
-     * Entrai a mensagem do evento. O evento passado por par√¢metro representa o
+     * Entrai a mensagem do evento. O evento passado por par‚metro representa o
      * evento id=4 do componente de comunicaÁ„o referente ao recebimento de
-     * messagens. Esse evento È um evento de interaÁ„o e os par√¢metros de
-     * entrada s√£o:
+     * messagens. Esse evento È um evento de interaÁ„o e os par‚metros de
+     * entrada s„o:
      * <ul><li>message: urbosenti.core.communication.Message, contÈm a mensagem,
      * bem como quem enviou a mensagem</li>
-     * <li>sender: urbosenti.core.communication.Address, contÈm o endere√ßo de
+     * <li>sender: urbosenti.core.communication.Address, contÈm o endereÁo de
      * quem enviou a mensagem</li></ul>
      *
      * @param event
@@ -302,26 +303,26 @@ public final class AdaptationDAO {
         AgentCommunicationLanguage usedAgentCommunicationLanguage = null;
         boolean interactionExists = false;
         /**
-         * **** Valida√ß√µes ******
+         * **** ValidaÁıes ******
          */
-        // verifica se o UID da mensagem existe no sistema, se sim retorna o agente referente e o servi√ßo
-        Service service = this.getServiceByUid(message.getOrigin().getUid());
-        if (service == null) {
-            service = dataManager.getServiceDAO().getServiceByUid(message.getOrigin().getUid());
-            // se volta null o servi√ßo n√£o est√° cadastrado
-            if (service == null) {
-                throw new Exception("Service UID '" + message.getOrigin().getUid() + "' not found.");
-            } else {
-                // adiciona em mem√≥ria se o novo servi√ßo estiver no banco
-                deviceModel.getServices().add(service);
-            }
-        }
-        // se retorna null, o servi√ßo n√£o possui agente para interaÁ„o
-        if (service.getAgent() == null) {
-            // caso n√£o
-            // excess√£o agente n√£o registrado
-            throw new Exception("Agent of service UID '" + message.getOrigin().getUid() + "' not was found.");
-        }
+        // verifica se o UID da mensagem existe no sistema, se sim retorna o agente referente e o serviÁo
+        //Service service = this.getServiceByUid(message.getOrigin().getUid());
+        //if (service == null) {
+        //    service = dataManager.getServiceDAO().getServiceByUid(message.getOrigin().getUid());
+            // se volta null o serviÁo n„o est· cadastrado
+        //    if (service == null) {
+        //        throw new Exception("Service UID '" + message.getOrigin().getUid() + "' not found.");
+        //    } else {
+                // adiciona em memÛria se o novo serviÁo estiver no banco
+              //  deviceModel.getServices().add(service);
+        //    }
+        //}
+        // se retorna null, o serviÁo n„o possui agente para interaÁ„o
+        //if (service.getAgent() == null) {
+            // caso n„o
+            // excess„o agente n„o registrado
+        //    throw new Exception("Agent of service UID '" + message.getOrigin().getUid() + "' not was found.");
+        //}
         /**
          * *** Extrair a mensagem *****
          */
@@ -338,14 +339,14 @@ public final class AdaptationDAO {
          </fipa-message>
          </message>
          </content> */
-        // extrai a acl e verifica qual a linguagem, verificando se o tipo de agente suporta, caso n√£o, exceÁ„o
+        // extrai a acl e verifica qual a linguagem, verificando se o tipo de agente suporta, caso n„o, exceÁ„o
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(new InputSource(new StringReader(message.getContent())));
         // <content>
         Element root = doc.getDocumentElement(), messageContent;
         // <acl>fipa</acl>
-        // testa se a ACL È conhecida, se n√£o for gera exceÁ„o, se sim retorna o id
+        // testa se a ACL È conhecida, se n„o for gera exceÁ„o, se sim retorna o id
         for (AgentCommunicationLanguage acl : acls) {
             if (dataManager.getAgentCommunicationLanguageDAO()
                     .isAgentCommunicationLanguageKnown(acl, root.getElementsByTagName("acl").item(0).getTextContent())) {
@@ -361,25 +362,27 @@ public final class AdaptationDAO {
         // <interactionId>1</interactionId>
         int interactionId = Integer.parseInt(root.getElementsByTagName("interactionId").item(0).getTextContent());
         // flag = false
-        // checa em mem√≥ria primeiro pelo servi√ßo
-        for (InteractionModel interaction : service.getAgent().getAgentType().getInteractionModels()) {
+        // checa em memÛria primeiro pelo serviÁo
+        /*for (InteractionModel interaction : service.getAgent().getAgentType().getInteractionModels()) {
             if (interaction.getId() == interactionId) {
+                interactionModel = interaction;
                 interactionExists = true;
                 break;
             }
-        }
+        }*/
         if (!interactionExists) {
-            // checa em mem√≥ria pelos tipos de agente
+            // checa em memÛria pelos tipos de agente
             for (AgentType agentType : this.agentTypes) {
                 for (InteractionModel interaction : agentType.getInteractionModels()) {
                     if (interaction.getId() == interactionId) {
+                        interactionModel = interaction;
                         interactionExists = true;
                         break;
                     }
                 }
             }
         }
-        // checa no banco se n√£o encontrou em mem√≥ria
+        // checa no banco se n„o encontrou em memÛria
         if (!interactionExists) {
             if (dataManager.getAgentTypeDAO().getInteractionModel(interactionId) == null) {
                 throw new Exception("Interaction model referred by the value interactionId:'" + interactionId + "' was not found.");
@@ -387,7 +390,7 @@ public final class AdaptationDAO {
         }
 
         /**
-         * *** Processar conte√∫do segundo Agent Communication Language *****
+         * *** Processar conte˙do segundo Agent Communication Language *****
          */
         // se for FIPA executa esse processo, se houvesse outras a implementaÁ„o seria dada por esta
         // extrai a mensagem e processa na linguagem conhecida (FIPA)
@@ -395,19 +398,19 @@ public final class AdaptationDAO {
             // <fipa-message>
             messageContent = (Element) root.getElementsByTagName("fipa-message").item(0);
             /**
-             * A informaÁ„o de que ato comunicativo est√° sendo passado È
-             * despres√≠vel por causa do interactionId
+             * A informaÁ„o de que ato comunicativo est· sendo passado È
+             * despresÌvel por causa do interactionId
              * <fipa-message act="inform" >
              * String communicativeAct = messageContent.getAttribute("act");
              */
             /**
-             * Elementos est√°ticos por enquanto, n√£o h√° necessidade de
-             * implementar dinamicamente. Trabalho futuro, deixar din√¢mico.
+             * Elementos est·ticos por enquanto, n„o h· necessidade de
+             * implementar dinamicamente. Trabalho futuro, deixar din‚mico.
              * <ontology>UrboSenti 1.0</ontology>
              * <protocol>UrboSenti-interaction-1.0</protocol>
              * <language>xml</language>
              */
-            // Processar conte√∫do da mensagem adicionando os elementos como par√¢metros no HashMap do objetivo event
+            // Processar conte˙do da mensagem adicionando os elementos como par‚metros no HashMap do objetivo event
             // <content><chave>valor</chave></content>
             Element content = (Element) messageContent.getElementsByTagName("content").item(0);
             for (Parameter p : interactionModel.getParameters()) {
@@ -421,7 +424,7 @@ public final class AdaptationDAO {
         }
         // adiciona o interaction ID no evento
         event.setId(interactionId);
-        // retorna o evento de interaÁ„o com os par√¢metros e o interaction id referentes do Interaction Model
+        // retorna o evento de interaÁ„o com os par‚metros e o interaction id referentes do Interaction Model
         return event;
     }
 
@@ -434,7 +437,7 @@ public final class AdaptationDAO {
         /**
          * *** Extrair a mensagem *****
          */
-        //<content> -- ser√° adicionado na mensagem
+        //<content> -- ser· adicionado na mensagem
         // <acl>fipa</acl>
         finalString = "<acl>fipa</acl>";
         // <interactionId>1</interactionId>
@@ -476,7 +479,7 @@ public final class AdaptationDAO {
         message.setSubject(Message.SUBJECT_SYSTEM_MESSAGE);
         message.setContentType("text/xml");
         message.setUsesUrboSentiXMLEnvelope(true);
-        // Preparar aÁ„o para envio: envio de mensagens ass√≠ncrona
+        // Preparar aÁ„o para envio: envio de mensagens assÌncrona
         action.getParameters().put("message", message);
         if (action.isSynchronous()) {
             action.setId(CommunicationManager.ACTION_SEND_SYNCHRONOUS_MESSAGE);
@@ -493,7 +496,7 @@ public final class AdaptationDAO {
     public void updateDecision(FeedbackAnswer response, Event event, Action actionToExecute, ExecutionPlan ep) throws SQLException, java.lang.NullPointerException {
         // regsitra a aÁ„o
         this.dataManager.getActionModelDAO().insertAction(response, event, actionToExecute, ep);
-        // se a resposta da aÁ„o foi sucesso, verifica  se algum dos par√¢metros do actionModel È relacionado com algum estado
+        // se a resposta da aÁ„o foi sucesso, verifica  se algum dos par‚metros do actionModel È relacionado com algum estado
         if (response.getId() == FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL) {
             ActionModel actionModel = this.getActionModel(
                     actionToExecute.getId(),
@@ -505,7 +508,7 @@ public final class AdaptationDAO {
                         actionToExecute.getTargetEntityId(),
                         actionToExecute.getTargetComponentId());
             }
-            // atualiza par√¢metros
+            // atualiza par‚metros
             for (Parameter p : actionModel.getParameters()) {
                 if (content == null) {
                     content = new Content(Content.parseContent(
@@ -517,9 +520,9 @@ public final class AdaptationDAO {
                             p.getDataType(), actionToExecute.getParameters().get(p.getLabel())));
                     content.setTime(response.getTime());
                 }
-                //verifica  se algum dos par√¢metros do actionModel È relacionado com algum estado
+                //verifica  se algum dos par‚metros do actionModel È relacionado com algum estado
                 if (p.getRelatedState() != null) {
-                    // verifica se È estado de inst√¢ncia ou de entidade
+                    // verifica se È estado de inst‚ncia ou de entidade
                     if (p.getRelatedState().isStateInstance()) {
                         int instanceId;
                         if (actionToExecute.getParameters().get("interface") != null) {
@@ -527,7 +530,7 @@ public final class AdaptationDAO {
                         } else {
                             instanceId = (Integer) actionToExecute.getParameters().get("instanceId");
                         }
-                        // recuperar a inst√¢ncia
+                        // recuperar a inst‚ncia
                         Instance instance = this.getInstance(
                                 actionToExecute.getTargetComponentId(),
                                 actionToExecute.getTargetEntityId(),
@@ -541,7 +544,7 @@ public final class AdaptationDAO {
                                 this.addInstanceInMemory(instance);
                             }
                         }
-                        // procurar o estado para salvar o conte√∫do
+                        // procurar o estado para salvar o conte˙do
                         for (State s : instance.getStates()) {
                             if (s.getModelId() == p.getRelatedState().getModelId()) {
                                 s.setContent(content);
@@ -555,7 +558,7 @@ public final class AdaptationDAO {
                         this.dataManager.getEntityStateDAO().insertContent(p.getRelatedState());
                     }
                 }
-                // Testa se o par√¢metro existe e È objegrat√≥rio, depois salva o conte√∫do do par√¢metro
+                // Testa se o par‚metro existe e È objegratÛrio, depois salva o conte˙do do par‚metro
                 if (actionToExecute.getParameters().get(p.getLabel()) == null && !p.isOptional()) {
                     throw new Error("Parameter " + p.getLabel() + " from the event " + actionModel.getDescription() + " id " + actionModel.getId()
                             + " was not found. Such parameter is not optional!");
@@ -571,7 +574,7 @@ public final class AdaptationDAO {
 
     /**
      *
-     * @param instanceId inst√¢ncia
+     * @param instanceId inst‚ncia
      * @param lastIntervalOfServiceErrors intervalo para busca
      * @return null if do not find any record or the generated action ID if was
      * find.
@@ -608,20 +611,20 @@ public final class AdaptationDAO {
 
     public String getErrorReporting(Date startDate, Date endDate) throws SQLException {
         String json = "{ ";
-        // buscar todas as a√ß√µes de erro a partir da √∫ltima data atÈ a data atual
+        // buscar todas as aÁıes de erro a partir da ˙ltima data atÈ a data atual
         List<Action> actions = dataManager.getActionModelDAO()
                 .getActions(AdaptationManager.ACTION_STORE_INTERNAL_ERROR,
                         ENTITY_ID_OF_ADAPTATION_MANAGEMENT, COMPONENT_ID, startDate, endDate);
         List<Action> feedbackErros = dataManager.getActionModelDAO()
                 .getActionsFeedbackErrors(startDate, endDate);
         List<Parameter> parameters;
-        // se n√£o houver nenhuma aÁ„o com erro, cria uma de sucesso. 
+        // se n„o houver nenhuma aÁ„o com erro, cria uma de sucesso. 
         if (actions.isEmpty() && feedbackErros.isEmpty()) {
             json += "\"nodeStatusReported\" : \"stable\"";
         } else {
             // cria erros
             json += "\"nodeStatusReported\" : \"error\", ";
-            // para cada aÁ„o buscar os par√¢metros
+            // para cada aÁ„o buscar os par‚metros
             json += "\"errors\" : [ ";
             /*
              Para o erro:
@@ -629,7 +632,7 @@ public final class AdaptationDAO {
              - DescriÁ„o
              - Tempo
              - Instance id (se houver)
-             "message" : ["type":"2", "description":"Inst√¢ncia demorou para iniciar", "time":"1439426402937", "instanceId": 1 ] ,
+             "message" : ["type":"2", "description":"Inst‚ncia demorou para iniciar", "time":"1439426402937", "instanceId": 1 ] ,
              */
             for (Action action : actions) {
                 json += " { \"message\" : [ ";
@@ -650,11 +653,11 @@ public final class AdaptationDAO {
              - modelo de aÁ„o
              - entidade_acao
              - componente_acao
-             - par√¢metros_acao
+             - par‚metros_acao
              - modelo de evento inicial, 
              - entidade_evento,
              - componente_evento,
-             - par√¢metros_evento,
+             - par‚metros_evento,
              "feedback" : ["responseTime":560 , "actionType":0, "actionModel":1 , "actionEntity":1 , "actionComponent": 1, 
              "actionParameters": ["param1":"value1","param2":"value2"], "eventType":0, "eventModel": 1, "eventEntity":1, 
              "eventComponent":1, "eventTime":1439426402937 , "eventParameters" : ["param1":"value1","param2":"value2"] ] ,
@@ -750,7 +753,7 @@ public final class AdaptationDAO {
     }
 
     public InteractionModel getInteractionModel(Event event) {
-        // se o evento j√° existe n√£o precisa buscar
+        // se o evento j· existe n„o precisa buscar
         if(interactionModel.getId()==event.getId()&&event.getEventType()==Event.INTERATION_EVENT){
             return interactionModel;
         }
@@ -766,7 +769,7 @@ public final class AdaptationDAO {
     }
 
     /**
-     * Retorna da mem√≥ria ou do banco de dados
+     * Retorna da memÛria ou do banco de dados
      *
      * @param interactionId
      * @return
@@ -774,7 +777,7 @@ public final class AdaptationDAO {
      */
     public InteractionModel getInteractionModel(int interactionId) throws SQLException {
         for (AgentType agentType : this.agentTypes) {
-// por enquanto n√£o h√° filtro por tipo de agente. Existe somente um tipo de agente            
+// por enquanto n„o h· filtro por tipo de agente. Existe somente um tipo de agente            
 //            if (agentType.getId() == event.getId()) {
             for (InteractionModel im : agentType.getInteractionModels()) {
                 if (im.getId() == interactionId) {

@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +22,9 @@ import urbosenti.core.communication.interfaces.WiredCommunicationInterface;
 public class AndroidGeneralCommunicationInterface extends CommunicationInterface {
 
     private Context context;
-
+    ConnectivityManager connMgr;
+    NetworkInfo networkInfo;
+    
 	public AndroidGeneralCommunicationInterface(Context context) {
         super();
         setId(1);
@@ -31,6 +32,8 @@ public class AndroidGeneralCommunicationInterface extends CommunicationInterface
         setUsesMobileData(false);
         setStatus(CommunicationInterface.STATUS_UNAVAILABLE);
         this.context = context;
+        connMgr = (ConnectivityManager) 
+        		context.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
     @Override
@@ -41,18 +44,16 @@ public class AndroidGeneralCommunicationInterface extends CommunicationInterface
         // abre a conexão
         //HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
 
-           // tenta buscar conteÃºdo da URL
-        // se não tiver conexão, essa linha irÃ¡ falhar
+           // tenta buscar conteúdo da URL
+        // se não tiver conexão, essa linha irá falhar
         //urlConnect.connect();
-        //urlConnect.disconnect();
-        ConnectivityManager connMgr = (ConnectivityManager) 
-                this.context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                return true;
-            } else {
-                return false;
-            }
+        //urlConnect.disconnect();        
+         networkInfo = connMgr.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnected()) {
+            return true;
+        } else {
+            return false;
+        }
            //Object objData = urlConnect.getContent();
     }
 
@@ -61,11 +62,10 @@ public class AndroidGeneralCommunicationInterface extends CommunicationInterface
         try {
             // abre a conexão
             HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
-            // tenta buscar conteÃºdo da URL
-            // se não tiver conexão, essa linha irÃ¡ falhar
+            // tenta buscar conteúdo da URL
+            // se não tiver conexão, essa linha irá falhar
             urlConnect.connect();
             urlConnect.disconnect();
-
         } catch (UnknownHostException ex) {
             Logger.getLogger(WiredCommunicationInterface.class.getName()).log(Level.SEVERE, null, ex);
             return false;
@@ -95,9 +95,9 @@ public class AndroidGeneralCommunicationInterface extends CommunicationInterface
     @Override
     public Object sendMessageWithResponse(CommunicationManager communicationManager, MessageWrapper messageWrapper) throws SocketTimeoutException, IOException {
         String result = "";
-        URL url = new URL(messageWrapper.getMessage().getTarget().getAddress());
         //URL url = new URL("http://143.54.12.47:8084/TestServer/webresources/test/return");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+        HttpURLConnection conn = (HttpURLConnection) (new URL(messageWrapper.getMessage().getTarget().getAddress())).openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
         //conn.setRequestProperty("Accept", "application/json");
@@ -107,46 +107,36 @@ public class AndroidGeneralCommunicationInterface extends CommunicationInterface
         if (messageWrapper.getTimeout() > 0) {
             conn.setReadTimeout(messageWrapper.getTimeout());
         }
-        Date iniTime = new Date();
-
         conn.connect();
         OutputStream os = conn.getOutputStream();
         os.write(messageWrapper.getEnvelopedMessage().getBytes());
         os.flush();
-
         // HttpURLConnection.HTTP_NOT_FOUND --- Posso usar para um evento de endereço não existe
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            throw new RuntimeException("Failed : HTTP error code : "
+        	throw new IOException("Failed : HTTP error code : "
                     + conn.getResponseCode());
         }
-
         BufferedReader br = new BufferedReader(new InputStreamReader(
                 (conn.getInputStream())));
-
         String output;
         while ((output = br.readLine()) != null) {
             result += output;
         }
-
+        br.close();
         conn.disconnect();
-        // Adicionar métricas de avaliação **************************************8
-        super.updateEvaluationMetrics(messageWrapper, iniTime, new Date());
-        // Adicionar métricas de avaliação **************************************8
         return result;
     }
 
     @Override
     public boolean sendMessage(CommunicationManager communicationManager, MessageWrapper messageWrapper) throws SocketTimeoutException, IOException {
-        String result = "";
-        URL url = new URL(messageWrapper.getTargetAddress());
+        //String result = "";
+        //URL url = new URL(messageWrapper.getTargetAddress());
         //URL url = new URL("http://143.54.12.47:8084/TestServer/webresources/test");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) (new URL(messageWrapper.getMessage().getTarget().getAddress())).openConnection();
         // Se possuí timeout customizado o utiliza
         if (messageWrapper.getTimeout() > 0) {
             conn.setReadTimeout(messageWrapper.getTimeout());
         }
-        Date iniTime = new Date();
-
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
         //conn.setRequestProperty("Accept", "application/json");
@@ -158,12 +148,10 @@ public class AndroidGeneralCommunicationInterface extends CommunicationInterface
         os.flush();
 
         if (conn.getResponseCode() != HttpURLConnection.HTTP_OK && conn.getResponseCode() != HttpURLConnection.HTTP_NO_CONTENT) {
-            throw new RuntimeException("Failed : HTTP error code : "
+            throw new IOException("Failed : HTTP error code : "
                     + conn.getResponseCode());
         }
         conn.disconnect();
-        // Adicionar métricas de avaliação **************************************8
-        super.updateEvaluationMetrics(messageWrapper, iniTime, new Date());
         // Adicionar métricas de avaliação **************************************8
         return true;
     }

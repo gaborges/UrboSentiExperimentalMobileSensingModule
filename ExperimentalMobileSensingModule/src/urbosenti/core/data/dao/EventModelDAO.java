@@ -51,6 +51,14 @@ public class EventModelDAO {
     }
 
     public void insert(EventModel event) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         //String sql = "INSERT INTO events (model_id,description,synchronous,implementation_type_id,entity_id) "
         //        + " VALUES (?,?,?,?,?);";
         event.setModelId(event.getId());
@@ -71,6 +79,14 @@ public class EventModelDAO {
     }
 
     public void insertParameters(EventModel event) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
        // String sql = "INSERT INTO event_parameters (description,optional,parameter_label,superior_limit,inferior_limit,initial_value,entity_state_id,data_type_id,event_id) "
         //        + " VALUES (?,?,?,?,?,?,?,?,?);";
         
@@ -111,6 +127,14 @@ public class EventModelDAO {
      * @throws SQLException
      */
     public void insertPossibleParameterContents(Parameter parameter) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         //String sql = "INSERT INTO possible_event_contents (possible_value, default_value, event_parameter_id) "
         //        + " VALUES (?,?,?);";
         
@@ -152,6 +176,14 @@ public class EventModelDAO {
     }
 
     public Content getCurrentContentValue(Parameter parameter) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         Content content = null;
         String sql = "SELECT id, reading_value, reading_time "
                 + "FROM event_contents\n"
@@ -174,6 +206,14 @@ public class EventModelDAO {
     }
 
     public void insertContent(Parameter parameter, Event event) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         //String sql = "INSERT INTO event_contents (reading_value,reading_time,event_parameter_id, generated_event_id) "
         //        + " VALUES (?,?,?,?);";
         
@@ -193,6 +233,14 @@ public class EventModelDAO {
     }
 
     public List<EventModel> getEntityEventModels(Entity entity) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         List<EventModel> events = new ArrayList();
         EventModel event = null;
         String sql = "SELECT events.id as event_id, model_id, events.description as event_description, synchronous, "
@@ -245,6 +293,14 @@ public class EventModelDAO {
     }
 
     private List<Parameter> getEventParameters(EventModel event) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         List<Parameter> parameters = new ArrayList();
         Parameter parameter = null;
         String sql = "SELECT event_parameters.id as parameter_id, parameter_label, event_parameters.description as parameter_desc, \n"
@@ -294,6 +350,14 @@ public class EventModelDAO {
     }
 
     public EventModel get(int modelId, int entityModelId, int componentId) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         EventModel event = null;
         String sql = "SELECT events.id as event_id, events.model_id, events.description as event_description, synchronous, \n"
                 + "                implementation_type_id, implementation_types.description as implementation_description \n"
@@ -325,6 +389,14 @@ public class EventModelDAO {
     }
 
     public EventModel get(int id) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         EventModel event = null;
         String sql = "SELECT events.id as event_id, events.model_id, events.description as event_description, synchronous, \n"
                 + "                implementation_type_id, implementation_types.description as implementation_description \n"
@@ -359,6 +431,14 @@ public class EventModelDAO {
      * @throws Exception
      */
     public void insert(Event event, EventModel eventModel) throws SQLException, Exception {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         // Criar evento
         //String sql = "INSERT INTO generated_events (event_id,entity_id,component_id,time,timeout,event_type) "
         //        + " VALUES (?,?,?,?,?,?);";
@@ -444,6 +524,14 @@ public class EventModelDAO {
     }
 
     public Event getEvent(int dataBaseActionId,BaseComponentManager bcm) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         Event event = null;
         String sql = " SELECT generated_events.id, generated_events.event_id, generated_events.entity_id, generated_events.component_id, generated_events.time, "
                 + " timeout, generated_events.event_type, description, synchronous "

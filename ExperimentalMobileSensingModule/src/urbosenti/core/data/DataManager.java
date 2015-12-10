@@ -211,6 +211,10 @@ public class DataManager extends ComponentManager {
                 this.databaseHelper.saveGeneralDefinitions();
                 this.databaseHelper.saveDevice();
                 this.databaseHelper.saveAgentModels();
+                /* Limpa dados temporários */
+                this.databaseHelper.cleanTemporaryData();
+                /* limpa o arquivo */
+                this.knowledgeRepresentation = null;
             } catch (ParserConfigurationException ex) {
                 if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                     Logger.getLogger(DeviceManager.class.getName()).log(Level.SEVERE, null, ex);

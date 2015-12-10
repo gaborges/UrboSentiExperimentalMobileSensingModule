@@ -27,26 +27,26 @@ public abstract class AbstractDiagnosisModel {
     }
 
     /**
-     * Executa o processo de an√°lise retornando o diagn√≥stico. Caso o evento for
-     * uma intera√ß√£o elexecuta a fun√ß√£o interactionAnalysis(Event event); Se for
-     * um evento interno utiliza a fun√ß√£o eventAnalysis(Event event). Em √∫ltimo
-     * caso retorna o diagn√≥stico sem mudan√ßas.
+     * Executa o processo de an·lise retornando o diagnÛstico. Caso o evento for
+     * uma interaÁ„o elexecuta a funÁ„o interactionAnalysis(Event event); Se for
+     * um evento interno utiliza a funÁ„o eventAnalysis(Event event). Em ˙ltimo
+     * caso retorna o diagnÛstico sem mudanÁas.
      *
      * @param event
      * @return
      * @throws java.sql.SQLException
      */
     public Diagnosis analysis(Event event)throws SQLException, Exception {
-        /* se o tamanho das mudan√ßas (changes) for maior de 0, ent√£o quer dizer 
-         que a an√°lise anterior n√£o teve diagn√≥stico e n√£o precisa que uma nova 
-         inst√¢ncia de diagn√≥stico seja feita */
+        /* se o tamanho das mudanÁas (changes) for maior de 0, ent„o quer dizer 
+         que a an·lise anterior n„o teve diagnÛstico e n„o precisa que uma nova 
+         inst‚ncia de diagnÛstico seja feita */
         if (diagnosis.getChanges().size() > 0) {
-            this.diagnosis = new Diagnosis();
+        	this.getDiagnosis().getChanges().clear();
         }
-        // Tipo de evento intera√ß√£o, an√°lise de intera√ß√£o
+        // Tipo de evento interaÁ„o, an·lise de interaÁ„o
         if (event.getEventType() == Event.INTERATION_EVENT) {
             this.interactionAnalysis(event, this.diagnosis, this.adaptationDAO);
-        } // tipo de evento de componente. An√°lise de eventos internos
+        } // tipo de evento de componente. An·lise de eventos internos
         else if (event.getEventType() == Event.COMPONENT_EVENT) {
             this.eventAnalysis(event, this.diagnosis, this.adaptationDAO);
         }

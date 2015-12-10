@@ -45,7 +45,7 @@ public class TestCommunication {
 
         // Envio de mensagem com retorno
         // testaEnvioMensagemComRetorno();
-        // Teste do servi√ßo de upload - ok
+        // Teste do serviÁo de upload - ok
         testaUploadServer();
 
     }
@@ -53,7 +53,6 @@ public class TestCommunication {
     public void test2(long interval,long experimentalTime) {
         
         end = false;
-        FileReader fr = null;
         final Timer timer = new Timer("Tester");
         long endInterval = 10000L; //10s
         long stopTime = 57600000L; //16h
@@ -272,7 +271,7 @@ public class TestCommunication {
         // testaEnvioMensagemSemRetorno(); // OK
         // Envio de mensagem com retorno
         // testaEnvioMensagemComRetorno();
-        // Teste do servi√ßo de upload - ok
+        // Teste do serviÁo de upload - ok
         //testaUploadServer();
         //final File simulatedSet = new File("user20.csv");
         // simulatedSet.
@@ -350,7 +349,7 @@ public class TestCommunication {
         try {
             deviceManager.getCommunicationManager().sendMessage(m);
         } catch (java.net.ConnectException ex) {
-            System.out.println("Host n√£o acess√≠vel!");
+            System.out.println("Host n„o acessÌvel!");
         } catch (SocketTimeoutException ex) {
             Logger.getLogger(TestCommunication.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -384,20 +383,20 @@ public class TestCommunication {
     }
 
     public void testaUploadServer() {
-//        // Servi√ßo do report
+//        // ServiÁo do report
 //        Service service = new Service();
 //        service.setServiceUID("666");
 //        service.setApplicationUID("333");
 //        service.setAddress("http://localhost:8090/Test2Server/webresources/generic");
-//        // adiciona o servi√ßo       
+//        // adiciona o serviÁo       
 //        deviceManager.getCommunicationManager().addUploadServer(service);
 //        
-        // Inicia o servi√ßo de envio de mensagens
+        // Inicia o serviÁo de envio de mensagens
 //        Thread t = new Thread(deviceManager.getCommunicationManager());
 //        t.start();        
 
-        // Adiciona a origem, e √© somente necess√°rio se for uma mensagem de 
-        // sistema, caso n√£o seja somente a mensagem √© necess√°ria
+        // Adiciona a origem, e È somente necess·rio se for uma mensagem de 
+        // sistema, caso n„o seja somente a mensagem È necess·ria
 //        Address origin = new Address();
 //        origin.setLayer(Address.LAYER_SYSTEM);
         // Cria a mensagem

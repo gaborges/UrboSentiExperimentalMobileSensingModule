@@ -48,6 +48,14 @@ public class ActionModelDAO {
     }
 
     public void insert(ActionModel action) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         //String sql = "INSERT INTO actions (model_id,description,has_feedback,entity_id) "
         //        + " VALUES (?,?,?,?);";
         action.setModelId(action.getId());
@@ -75,6 +83,14 @@ public class ActionModelDAO {
     }
 
     public void insertFeedbackAnswers(ActionModel action) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         //String sql = "INSERT INTO possible_action_contents (description, action_id) "
         //        + " VALUES (?,?);";
         
@@ -99,6 +115,14 @@ public class ActionModelDAO {
     }
 
     public void insertParameters(ActionModel action) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         //String sql = "INSERT INTO action_parameters (description,optional,label,superior_limit,inferior_limit,initial_value,entity_state_id,data_type_id,action_id) "
         //        + " VALUES (?,?,?,?,?,?,?,?,?);";
         
@@ -156,6 +180,14 @@ public class ActionModelDAO {
      */
     public void insertPossibleParameterContents(Parameter parameter)
             throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         //String sql = "INSERT INTO possible_action_contents (possible_value, default_value, action_parameter_id) "
         //        + " VALUES (?,?,?);";
 
@@ -188,6 +220,14 @@ public class ActionModelDAO {
 
     public Content getCurrentContentValue(Parameter parameter)
             throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         Content content = null;
         String sql = "SELECT id, reading_value, reading_time, score "
                 + " FROM action_contents "
@@ -208,6 +248,14 @@ public class ActionModelDAO {
     }
 
     public void insertContent(Parameter parameter, Action action) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         //String sql = "INSERT INTO action_contents (reading_value,reading_time,action_parameter_id,score,generated_action_id) "
         //        + " VALUES (?,?,?,?,?);";
         
@@ -235,6 +283,14 @@ public class ActionModelDAO {
     }
 
     List<ActionModel> getEntityActionModels(Entity entity) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         List<ActionModel> actions = new ArrayList();
         ActionModel action = null;
         String sql = "SELECT id, model_id, description, has_feedback "
@@ -258,6 +314,14 @@ public class ActionModelDAO {
     }
 
     ActionModel getActionModel(int id) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         ActionModel action = null;
         String sql = "SELECT actions.id, actions.model_id, actions.description, has_feedback, entities.description as entity_description, entity_id "
                 + "FROM actions, entities "
@@ -283,6 +347,14 @@ public class ActionModelDAO {
     }
 
     ActionModel getActionModel(int modelId, int entityModelId, int componentId) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         ActionModel action = null;
         String sql = "SELECT actions.id, actions.model_id, actions.description, has_feedback, entities.description as entity_description, entity_id "
                 + "FROM actions, entities "
@@ -313,6 +385,14 @@ public class ActionModelDAO {
 
     private List<FeedbackAnswer> getActionFeedbackAnswers(ActionModel action)
             throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         List<FeedbackAnswer> answers = new ArrayList();
         FeedbackAnswer answer = null;
         String sql = "SELECT id, description "
@@ -332,6 +412,14 @@ public class ActionModelDAO {
 
     private List<Parameter> getActionParameters(ActionModel action)
             throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         List<Parameter> parameters = new ArrayList();
         Parameter parameter = null;
         String sql = "SELECT action_parameters.id as parameter_id, label, action_parameters.description as parameter_desc, \n"
@@ -388,6 +476,14 @@ public class ActionModelDAO {
     }
 
     ActionModel getActionState(State entityState) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         ActionModel action = null;
         String sql = "SELECT action_id, actions.model_id as action_model_id, actions.description as action_desc, has_feedback, entity_id, "
                 + " action_parameters.id as parameter_id, action_parameters.description as parameter_desc, label, optional, superior_limit, "
@@ -448,6 +544,14 @@ public class ActionModelDAO {
 
     private List<PossibleContent> getPossibleContents(Parameter parameter)
             throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         List<PossibleContent> possibleContents = new ArrayList();
         String sql = " SELECT id, possible_value, default_value "
                 + " FROM possible_action_contents\n"
@@ -485,6 +589,14 @@ public class ActionModelDAO {
     }
 
     public ArrayList<Action> getActions(int actionModelId, int entityId, int componentId) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         ArrayList<Action> actions = new ArrayList<Action>();
         Action action;
         FeedbackAnswer feedbackAnswer;
@@ -514,6 +626,14 @@ public class ActionModelDAO {
     }
 
     public ArrayList<Action> getActions(int feedbackId) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         ArrayList<Action> actions = new ArrayList<Action>();
         Action action;
         FeedbackAnswer feedbackAnswer;
@@ -544,6 +664,14 @@ public class ActionModelDAO {
     }
 
     public ArrayList<Action> getActions(int feedbackId, long startDate, long lastDate) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         ArrayList<Action> actions = new ArrayList<Action>();
         Action action;
         FeedbackAnswer feedbackAnswer;
@@ -578,6 +706,14 @@ public class ActionModelDAO {
     }
 
     public ArrayList<Action> getActionsFeedbackErros(long startDate, long lastDate) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         ArrayList<Action> actions = new ArrayList<Action>();
         Action action;
         FeedbackAnswer feedbackAnswer;
@@ -612,6 +748,14 @@ public class ActionModelDAO {
     }
 
     public ArrayList<Action> getActions(int actionModelId, int entityId, int componentId, long startDate, long lastDate) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         ArrayList<Action> actions = new ArrayList<Action>();
         Action action;
         FeedbackAnswer feedbackAnswer;
@@ -644,6 +788,14 @@ public class ActionModelDAO {
     }
 
     public Action getAction(int actionId) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         Action action = null;
         FeedbackAnswer feedbackAnswer;
         String sql = "SELECT id, action_model_id, entity_id, component_id, action_type, response_time, feedback_id "
@@ -671,6 +823,14 @@ public class ActionModelDAO {
     }
 
     public List<Parameter> getActionParameterContents(int dataBaseActionId) throws SQLException {
+    	if(this.database == null || !this.database.isOpen()){
+    		try {
+				this.database = (SQLiteDatabase) dataManager.getDatabaseHelper().openDatabaseConnection();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
         List<Parameter> parameters = new ArrayList();
         Parameter parameter;
         Content content;

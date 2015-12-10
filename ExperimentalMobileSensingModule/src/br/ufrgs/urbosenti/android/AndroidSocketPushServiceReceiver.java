@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package urbosenti.core.communication.receivers;
+package br.ufrgs.urbosenti.android;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -23,19 +23,19 @@ import urbosenti.core.communication.PushServiceReceiver;
  *
  * @author Guilherme
  */
-public class SocketPushServiceReceiver extends PushServiceReceiver {
+public class AndroidSocketPushServiceReceiver extends PushServiceReceiver {
 
     private Integer port;
     private ServerSocket serverSocket;
 
-    public SocketPushServiceReceiver(CommunicationManager communicationManager) {
+    public AndroidSocketPushServiceReceiver(CommunicationManager communicationManager) {
         super(communicationManager);
         super.setId(1);
         super.setDescription("Socket Input Interface");
         this.port = 55666;
     }
     
-    public SocketPushServiceReceiver(CommunicationManager communicationManager, int port) {
+    public AndroidSocketPushServiceReceiver(CommunicationManager communicationManager, int port) {
         super(communicationManager);
         super.setId(1);
         super.setDescription("Socket Input Interface");
@@ -96,12 +96,12 @@ public class SocketPushServiceReceiver extends PushServiceReceiver {
                 Socket accept = this.serverSocket.accept();
                 DataInputStream dataInputStream = new DataInputStream(accept.getInputStream());
                 message = dataInputStream.readUTF();
-                super.communicationManager.newPushMessage(accept.getInetAddress().getHostAddress(), message);
                 dataInputStream.close();
                 accept.close();
+                super.communicationManager.newPushMessage(accept.getInetAddress().getHostAddress(), message);
             }
         } catch (IOException ex) {
-            Logger.getLogger(SocketPushServiceReceiver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AndroidSocketPushServiceReceiver.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

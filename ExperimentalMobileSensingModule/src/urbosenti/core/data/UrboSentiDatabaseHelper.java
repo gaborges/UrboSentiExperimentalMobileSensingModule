@@ -47,6 +47,7 @@ import urbosenti.core.device.model.Service;
 import urbosenti.core.device.model.ServiceType;
 import urbosenti.core.device.model.State;
 import urbosenti.core.device.model.TargetOrigin;
+import urbosenti.util.DeveloperSettings;
 
 /**
  *
@@ -55,18 +56,18 @@ import urbosenti.core.device.model.TargetOrigin;
 public abstract class UrboSentiDatabaseHelper {
 
     
-    private final List<AgentType> agentTypes;
-    private final List<ServiceType> serviceTypes;
-    private final List<EntityType> entityTypes;
-    private final List<DataType> dataTypes;
-    private final List<Implementation> implementationTypes;
-    private final List<AgentCommunicationLanguage> agentCommunicationLanguages;
-    private final List<CommunicativeAct> communicativeActs;
-    private final List<InteractionType> interactionTypes;
-    private final List<Direction> interactionDirections;
-    private final List<TargetOrigin> targetsOrigins;
-    private final List<AddressAgentType> agentAddressTypes;
-    private final Device device;
+    private List<AgentType> agentTypes;
+    private List<ServiceType> serviceTypes;
+    private List<EntityType> entityTypes;
+    private List<DataType> dataTypes;
+    private List<Implementation> implementationTypes;
+    private List<AgentCommunicationLanguage> agentCommunicationLanguages;
+    private List<CommunicativeAct> communicativeActs;
+    private List<InteractionType> interactionTypes;
+    private List<Direction> interactionDirections;
+    private List<TargetOrigin> targetsOrigins;
+    private List<AddressAgentType> agentAddressTypes;
+    private Device device;
     private final boolean showContent;
     private DataManager dataManager;
     private boolean isSaved;
@@ -75,22 +76,22 @@ public abstract class UrboSentiDatabaseHelper {
     Document doc;
     
     private UrboSentiDatabaseHelper() {
-        this.agentTypes = new ArrayList();
-        this.serviceTypes = new ArrayList();
-        this.entityTypes = new ArrayList();
-        this.dataTypes = new ArrayList();
-        this.implementationTypes = new ArrayList();
-        this.agentCommunicationLanguages = new ArrayList();
-        this.interactionTypes = new ArrayList();
-        this.interactionDirections = new ArrayList();
-        this.targetsOrigins = new ArrayList();
-        this.agentAddressTypes = new ArrayList();
+        this.agentTypes = new ArrayList<AgentType>();
+        this.serviceTypes = new ArrayList<ServiceType>();
+        this.entityTypes = new ArrayList<EntityType>();
+        this.dataTypes = new ArrayList<DataType>();
+        this.implementationTypes = new ArrayList<Implementation>();
+        this.agentCommunicationLanguages = new ArrayList<AgentCommunicationLanguage>();
+        this.interactionTypes = new ArrayList<InteractionType>();
+        this.interactionDirections = new ArrayList<Direction>();
+        this.targetsOrigins = new ArrayList<TargetOrigin>();
+        this.agentAddressTypes = new ArrayList<AddressAgentType>();
         this.device = new Device();
         this.device.setId(1);
-        this.device.setComponents(new ArrayList());
-        this.device.setServices(new ArrayList());
-        this.communicativeActs = new ArrayList();
-        this.showContent = false;
+        this.device.setComponents(new ArrayList<Component>());
+        this.device.setServices(new ArrayList<Service>());
+        this.communicativeActs = new ArrayList<CommunicativeAct>();
+        this.showContent = DeveloperSettings.SHOW_LOGS_DATABASE_CREATION;
         this.isSaved = false;
         this.dbFactory = DocumentBuilderFactory.newInstance();
         this.dBuilder = null;
@@ -381,7 +382,7 @@ public abstract class UrboSentiDatabaseHelper {
                 if (nListElements.getLength() > 0) {
                     for (int t = 0; t < nListElements.getLength(); t++) {
                         eElement = (Element) nListElements.item(t);
-                        if (eElement.hasAttribute("id")) { // Se tem o atributo id ent„o n„o È um estado individual de uma inst√¢ncia
+                        if (eElement.hasAttribute("id")) { // Se tem o atributo id ent„o n„o È um estado individual de uma inst‚ncia
                             State state = new State();
                             state.setId(Integer.parseInt(eElement.getAttribute("id")));
                             for (DataType type : dataTypes) {
@@ -452,9 +453,9 @@ public abstract class UrboSentiDatabaseHelper {
                 // Instances
                 nListElements = eEntity.getElementsByTagName("instance");
                 if (nListElements.getLength() > 0) {
-                    // Pega a classe que representa as inst√¢ncias
+                    // Pega a classe que representa as inst‚ncias
                     String representativeClass = eEntity.getElementsByTagName("instances").item(0).getAttributes().getNamedItem("representativeClass").getTextContent();
-                    // Adicionar as inst√¢ncias e seus estados
+                    // Adicionar as inst‚ncias e seus estados
                     for (int z = 0; z < nListElements.getLength(); z++) {
                         eElement = (Element) nListElements.item(z);
                         entity.getInstanceModels().add(new Instance(
@@ -462,18 +463,18 @@ public abstract class UrboSentiDatabaseHelper {
                                 eElement.getAttribute("description"),
                                 representativeClass));
 
-                        // Verificar se h· estados internos e sobreescrever as configuraÁ√µes individuais
+                        // Verificar se h· estados internos e sobreescrever as configuraÁıes individuais
                         nListSubElements = eElement.getElementsByTagName("state");
-                        // percorre estados da entidade para buscar estados de inst√¢ncia
+                        // percorre estados da entidade para buscar estados de inst‚ncia
                         for (State s : entity.getStates()) {
-                            // se o estado for um estado de inst√¢ncia, ent„o adicionar na inst√¢ncia o estado
+                            // se o estado for um estado de inst‚ncia, ent„o adicionar na inst‚ncia o estado
                             if (s.isStateInstance()) {
-                                // percorre os estados sobreescritos no conhecimento sobrescrevendo as novas configuraÁ√µes
+                                // percorre os estados sobreescritos no conhecimento sobrescrevendo as novas configuraÁıes
                                 for (int t = 0; t < nListSubElements.getLength(); t++) {
                                     eSubElement = (Element) nListSubElements.item(t);
                                     // checa se o estado atual possui o modelId indicado no conhecimento para sobrescrita
                                     if (s.isStateInstance() && s.getId() == Integer.parseInt(eSubElement.getAttribute("stateId"))) {
-                                        // sobreescrever configuraÁ√µes
+                                        // sobreescrever configuraÁıes
                                         if (eSubElement.hasAttribute("initialValue")) {
                                             s.setInitialValue(eSubElement.getAttribute("initialValue"));
                                         }
@@ -484,8 +485,8 @@ public abstract class UrboSentiDatabaseHelper {
                                             s.setInferiorLimit(eSubElement.getAttribute("inferiorLimit"));
                                         }
                                         if (eSubElement.getElementsByTagName("value").getLength() > 0) {
-                                            // Se h· conte√∫dos os de s s„o removidos e acidionados novos
-                                            s.setPossibleContent(new ArrayList());
+                                            // Se h· conte˙dos os de s s„o removidos e acidionados novos
+                                            s.setPossibleContent(new ArrayList<PossibleContent>());
                                             for (int n = 0; n < eSubElement.getElementsByTagName("value").getLength(); n++) {
                                                 eSubElement = (Element) nListSubElements.item(z);
                                                 PossibleContent pc = new PossibleContent(
@@ -563,7 +564,7 @@ public abstract class UrboSentiDatabaseHelper {
                                 }
                             } else {
                                 if (!eSubElement.hasAttribute("state")) {
-                                    throw new Error("Tipo de dado n„o informado para o par√¢metro " + event.getParameters().size() + " da entidade " + entity.getDescription());
+                                    throw new Error("Tipo de dado n„o informado para o par‚metro " + event.getParameters().size() + " da entidade " + entity.getDescription());
                                 }
                             }
                             // id - opcional
@@ -667,7 +668,7 @@ public abstract class UrboSentiDatabaseHelper {
                                 }
                             } else {
                                 if (!eSubElement.hasAttribute("state")) {
-                                    throw new Error("Tipo de dado n„o especificado para o par√¢metro " + action.getParameters().size() + " da entidade " + entity.getDescription());
+                                    throw new Error("Tipo de dado n„o especificado para o par‚metro " + action.getParameters().size() + " da entidade " + entity.getDescription());
                                 }
                             }
                             // id - opcional
@@ -781,11 +782,11 @@ public abstract class UrboSentiDatabaseHelper {
         Element eAgentModel, eElement, eSubElement;
         AgentCommunicationLanguage baseAgentCommunicationLanguage;
         int baseAgentType = 0;
-
+        
         nListAgentModel = doc.getDocumentElement().getElementsByTagName("agentModel");
         for (int i = 0; i < nListAgentModel.getLength(); i++) {
             eAgentModel = (Element) nListAgentModel.item(i);
-            // Encontra a acl base para todas as iteraÁ√µes
+            // Encontra a acl base para todas as iteraÁıes
             for (AgentCommunicationLanguage acl : agentCommunicationLanguages) {
                 if (acl.getId() == Integer.parseInt(eAgentModel.getAttribute("acl"))) {
                     baseAgentCommunicationLanguage = acl;
@@ -804,7 +805,7 @@ public abstract class UrboSentiDatabaseHelper {
             for (int j = 0; j < nListElements.getLength(); j++) {
                 // content
                 eElement = (Element) nListElements.item(j);
-                if (eElement.hasAttribute("id")) { // Se tem o atributo id ent„o n„o È um estado individual de uma inst√¢ncia
+                if (eElement.hasAttribute("id")) { // Se tem o atributo id ent„o n„o È um estado individual de uma inst‚ncia
                     State state = new State();
                     state.setId(Integer.parseInt(eElement.getAttribute("id")));
                     for (DataType type : dataTypes) {
@@ -931,7 +932,7 @@ public abstract class UrboSentiDatabaseHelper {
                         }
                     } else {
                         if (!eSubElement.hasAttribute("state")) {
-                            throw new Error("Tipo de dado n„o especificado para o par√¢metro " + interaction.getParameters().size() + " da entidade " + interaction.getDescription());
+                            throw new Error("Tipo de dado n„o especificado para o par‚metro " + interaction.getParameters().size() + " da entidade " + interaction.getDescription());
                         }
                     }
                     // id - opcional
@@ -1217,5 +1218,21 @@ public abstract class UrboSentiDatabaseHelper {
             }
         }
     }
+
+	public void cleanTemporaryData() {
+	    doc = null;	
+	    agentTypes = null;
+	    serviceTypes = null;
+	    entityTypes = null;
+	    dataTypes = null;
+	    implementationTypes = null;
+	    agentCommunicationLanguages = null;
+	    communicativeActs = null;
+	    interactionTypes = null;
+	    interactionDirections = null;
+	    targetsOrigins = null;
+	    agentAddressTypes = null;
+	    device = null;
+	}
 
 }

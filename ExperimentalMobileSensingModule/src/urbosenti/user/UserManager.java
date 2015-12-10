@@ -126,7 +126,7 @@ public class UserManager extends ComponentManager {
     @Override
     public FeedbackAnswer applyAction(Action action) {
         // não tem ações ainda
-        return new FeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
+        return FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
     }
 
     /**

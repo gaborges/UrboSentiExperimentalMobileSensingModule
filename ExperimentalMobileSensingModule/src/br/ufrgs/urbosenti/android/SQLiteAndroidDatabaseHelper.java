@@ -10,17 +10,33 @@ import android.content.Context;
 public class SQLiteAndroidDatabaseHelper extends UrboSentiDatabaseHelper {
 
 	private Context context;
-	private SQLiteDatabase db;
+	private static SQLiteDatabase db;
 	
 	public SQLiteAndroidDatabaseHelper(DataManager dataManager,Context context) {
 		super(dataManager);
 		this.context = context;
+		SQLiteAndroidDatabaseHelper.db = null;
 	}
 
 	@Override
-	public Object openDatabaseConnection() throws ClassNotFoundException, SQLException {
-		this.db = context.openOrCreateDatabase("urbosenti.db", Context.MODE_PRIVATE, null);
+	public synchronized Object openDatabaseConnection() throws ClassNotFoundException, SQLException {
+		if(SQLiteAndroidDatabaseHelper.db == null){
+			SQLiteAndroidDatabaseHelper.db = context.openOrCreateDatabase("urbosenti.db", Context.MODE_WORLD_READABLE, null);
+		}
+		if(!SQLiteAndroidDatabaseHelper.db.isOpen()){
+			SQLiteAndroidDatabaseHelper.db = context.openOrCreateDatabase("urbosenti.db", Context.MODE_WORLD_READABLE, null);
+		}
 		return db;
+	}
+	
+	public SQLiteDatabase openOrGetConnection() throws SQLException{
+		try {
+			return (SQLiteDatabase) this.openDatabaseConnection();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
@@ -465,9 +481,9 @@ public class SQLiteAndroidDatabaseHelper extends UrboSentiDatabaseHelper {
     }
     
     @Override
-	public void closeDatabaseConnection() throws SQLException {
-		if(this.db.isOpen()){
-			this.db.close();
+	public synchronized void closeDatabaseConnection() throws SQLException {
+		if(SQLiteAndroidDatabaseHelper.db.isOpen()){
+			SQLiteAndroidDatabaseHelper.db.close();
 		}
 	}
 

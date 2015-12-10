@@ -5,32 +5,34 @@ import java.util.Date;
 public class FeedbackAnswer {
     /**
      * int ACTION_RESULT_WAS_SUCCESSFUL = 1;
-     * Indica que o resultado da a√ß√£o foi sucesso
+     * Indica que o resultado da aÁ„o foi sucesso
      */
     public static int ACTION_RESULT_WAS_SUCCESSFUL = 1;
     /**
      * int ACTION_RESULT_FAILED = 2;
-     * Indica que o resultado da a√ß√£o foi falho
+     * Indica que o resultado da aÁ„o foi falho
      */
     public static int ACTION_RESULT_FAILED = 2;
     /**
      * int ACTION_RESULT_FAILED_TIMEOUT = 3;
-     * Indica que o resultado da a√ß√£o falhou devido ter demorado mais que o timeout (para eventos s√¨ncronos)
+     * Indica que o resultado da aÁ„o falhou devido ter demorado mais que o timeout (para eventos sÌncronos)
      */
     public static int ACTION_RESULT_FAILED_TIMEOUT = 3;
     /**
      * int ACTION_DOES_NOT_EXIST = 4;
-     * Indica que a a√ß√£o n√£o existe
+     * Indica que a aÁ„o n„o existe
      */
     public static int ACTION_DOES_NOT_EXIST = 4;
     private int id;
     private String description;
     private Date time;
+    private static FeedbackAnswer feedbackAnswer;
 
     public FeedbackAnswer(int id, String description) {
         this.id = id;
         this.description = description;
         this.time = new Date();
+        FeedbackAnswer.feedbackAnswer = null;
     }
     
     public FeedbackAnswer(int id) {
@@ -64,5 +66,26 @@ public class FeedbackAnswer {
     public void setTime(Date time) {
         this.time = time;
     }
+ 
+    public static FeedbackAnswer makeFeedbackAnswer(int id, String description){
+    	if(feedbackAnswer == null){
+    		feedbackAnswer = new FeedbackAnswer(id, description);
+    	} else {
+    		feedbackAnswer.setId(id);
+    		feedbackAnswer.setDescription(description);
+    		feedbackAnswer.getTime().setTime(System.currentTimeMillis());
+    	}
+		return feedbackAnswer;
+    }
     
+    public static FeedbackAnswer makeFeedbackAnswer(int id){
+    	if(feedbackAnswer == null){
+    		feedbackAnswer = new FeedbackAnswer(id);
+    	} else {
+    		feedbackAnswer.setId(id);
+    		feedbackAnswer.setDescription("");
+    		feedbackAnswer.getTime().setTime(System.currentTimeMillis());
+    	}
+		return feedbackAnswer;
+    }
 }

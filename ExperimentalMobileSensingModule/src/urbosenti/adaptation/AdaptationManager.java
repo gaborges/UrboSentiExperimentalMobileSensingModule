@@ -157,11 +157,7 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
     public static final int ACTION_UPDATE_LAST_SENT_REPORT_DATE = 5;
     //private LocalKnowledge localKnowledge
     private final Queue<Event> availableEvents;
-    private ContextManager contextManager;
-    private UserManager userManager;
     private boolean running;
-    private Boolean flag;
-    private Boolean monitor;
     private AdaptationDAO adaptationDAO;
     // private AdaptationLoopControler adaptationLoopControler;
     private boolean isAllowedReportingFunctionsToUploadService;
@@ -176,12 +172,8 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
 
     public AdaptationManager(DeviceManager deviceManager) {
         super(deviceManager, AdaptationDAO.COMPONENT_ID);
-        this.contextManager = null;
-        this.userManager = null;
         this.running = true;
         this.availableEvents = new LinkedList();
-        this.flag = true;
-        this.monitor = true;
         this.adaptationDAO = null;
         this.diagnosisModel = null;
         this.planningModel = null;
@@ -248,6 +240,7 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
             }
             // pegar diretamente do banco de dados depois de adicionado, por enquanto estático para testes
             this.intervalAmongModuleStateReports = 43200000L; // cada 12 horas
+            this.intervalAmongModuleStateReports = 28800000L; // cada 8hs
             this.intervalCleanStoredMessages = 3600000L; // cada hora
             this.scanIntervalOfServiceErrors = 60000L; // cada 1 minuto
             this.isAllowedReportingFunctionsToUploadService = true;
@@ -305,7 +298,7 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
                         Logger.getLogger(AdaptationManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     // retorno erro
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 }
                 break;
             case ACTION_REMOVE_SENT_FUNCTIONALITY_REPORTS:
@@ -317,7 +310,7 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
                         Logger.getLogger(AdaptationManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     // retorno erro
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 }
                 break;
             case ACTION_STORE_INTERNAL_ERROR:
@@ -334,12 +327,12 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
                 this.lastReportedDate = (Date) action.getParameters().get("time");
                 break;
             default:
-                answer = new FeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
+                answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
                 break;
         }
         // verifica se a ação existe ou se houve algum resultado durante a execução
         if (action.getId() >= 1 && action.getId() <= 5) {
-            answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL);
+            answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL);
         }
         return answer;
     }
@@ -1093,8 +1086,8 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
                 this.newEvent(errorEvent);
             }
         }
-    }
-
+    } 
+    
     protected void adaptationControlLoop() {
 
         Event errorEvent;
@@ -1142,7 +1135,7 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
                     errorEvent.setEntityId(AdaptationDAO.ENTITY_ID_OF_ADAPTATION_MANAGEMENT);
                     errorEvent.setParameters(values);
                     this.newEvent(errorEvent);
-                    throw new NullPointerException(ex.getMessage());
+                    throw new NullPointerException(ex.getLocalizedMessage());
                 }
                 /**
                  * ************** Analisys Process **************
@@ -1199,6 +1192,8 @@ public class AdaptationManager extends ComponentManager implements Runnable, Sys
                         }
                     }
                 }
+                /* processo de limpesa */
+                Event.cleanEvent(event);
             } catch (SQLException ex) {
                 if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                     Logger.getLogger(AdaptationManager.class.getName()).log(Level.SEVERE, null, ex);

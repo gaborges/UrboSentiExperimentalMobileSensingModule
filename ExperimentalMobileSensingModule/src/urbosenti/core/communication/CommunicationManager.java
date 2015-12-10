@@ -481,8 +481,9 @@ public class CommunicationManager extends ComponentManager {
     private final List<ReconnectionService> reconnectionServices;
     private UploadService backendUploadService;
     private boolean completelyDisconnected;
-    private Integer quantityLimit;
-    private Integer timeLimit;
+    private int quantityLimit;
+    private int timeLimit;
+    private static Address defaultPersonalAddress;
 
     public CommunicationManager(DeviceManager deviceManager) {
         super(deviceManager, CommunicationDAO.COMPONENT_ID);
@@ -495,6 +496,7 @@ public class CommunicationManager extends ComponentManager {
         this.backendUploadService = null;
         this.quantityLimit = Integer.MAX_VALUE;
         this.timeLimit = Integer.MAX_VALUE;
+        defaultPersonalAddress = null;
     }
 
     // if do not setted then when the method onCreate was activated it creates automatically
@@ -671,7 +673,7 @@ public class CommunicationManager extends ComponentManager {
                         Logger.getLogger(CommunicationManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     // retorno erro
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 }
                 break;
             case 2: // Alterar limite de relatos armazenados
@@ -880,17 +882,17 @@ public class CommunicationManager extends ComponentManager {
                     if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                         Logger.getLogger(CommunicationManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED_TIMEOUT, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED_TIMEOUT, ex.toString());
                 } catch (ConnectException ex) {
                     if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                         Logger.getLogger(CommunicationManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 } catch (IOException ex) {
                     if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                         Logger.getLogger(CommunicationManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 }
                 break;
             case 23: // 23 - Enviar mensagem assíncrona - target,message
@@ -907,13 +909,13 @@ public class CommunicationManager extends ComponentManager {
                         }
                     }
                     if (!found) {
-                        answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, "Upload Service UID:" + message.getTarget().getUid() + " was not found!");
+                        answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, "Upload Service UID:" + message.getTarget().getUid() + " was not found!");
                     }
                 } catch (SQLException ex) {
                     if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                         Logger.getLogger(CommunicationManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 }
                 break;
             case 24: // apagar mensagens expiradas
@@ -923,7 +925,7 @@ public class CommunicationManager extends ComponentManager {
                     if (DeveloperSettings.SHOW_EXCEPTION_ERRORS) {
                         Logger.getLogger(CommunicationManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
+                    answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_FAILED, ex.toString());
                 }
                 break;
             case 25: // Permitir realizar upload
@@ -947,9 +949,9 @@ public class CommunicationManager extends ComponentManager {
         }
         // verifica se a ação existe ou se houve algum resultado durante a execução
         if (answer == null && action.getId() >= 1 && action.getId() <= 26) {
-            answer = new FeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL);
+            answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_RESULT_WAS_SUCCESSFUL);
         } else if (answer == null) {
-            answer = new FeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
+            answer = FeedbackAnswer.makeFeedbackAnswer(FeedbackAnswer.ACTION_DOES_NOT_EXIST);
         }
         return answer;
     }
@@ -970,10 +972,8 @@ public class CommunicationManager extends ComponentManager {
         /*
          * Se quem está enviando não foi explicitado, então, por padrão, são preenxidos os dados do envio da aplicação.
          */
-        if (message.getOrigin() == null) {
-            message.setOrigin(new Address());
-            message.getOrigin().setLayer(Address.LAYER_APPLICATION);
-            message.getOrigin().setUid(getDeviceManager().getBackendService().getApplicationUID());
+        if (message.getOrigin() == null && message.getSubject() != Message.SUBJECT_REGISTRATION) {
+            message.setOrigin(this.getDefaultPersonalAddress());
         }
         MessageWrapper messageWrapper = new MessageWrapper(message);
         try {
@@ -1047,10 +1047,8 @@ public class CommunicationManager extends ComponentManager {
         /*
          * Se quem está enviando não foi explicitado, então, por padrão, são preenxidos os dados do envio da aplicação.
          */
-        if (message.getOrigin() == null) {
-            message.setOrigin(new Address());
-            message.getOrigin().setLayer(Address.LAYER_APPLICATION);
-            message.getOrigin().setUid(getDeviceManager().getBackendService().getApplicationUID());
+        if (message.getOrigin() == null && message.getSubject() != Message.SUBJECT_REGISTRATION) {
+            message.setOrigin(this.getDefaultPersonalAddress());
         }
         // Adiciona na mensagem que ele requer resposta
         message.setRequireResponse(true);
@@ -1071,6 +1069,7 @@ public class CommunicationManager extends ComponentManager {
                 Logger.getLogger(CommunicationManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+
         // 3 - Verifica se alguma interface de comunicação está disponível
         CommunicationInterface ci = this.getCommunicationInterfaceWithConnection(); // Método traz a interface de comunicação atual
         // 4 - [Nenhuma disponível]    
@@ -1081,8 +1080,16 @@ public class CommunicationManager extends ComponentManager {
             return null;
         }
         try {
-            // 5 - Tenta enviar --- OBS.: Implementar
+        	// debug da mensagem para enviar
+        	if(DeveloperSettings.SHOW_MESSAGE_CONTENT){
+        		System.out.println("Content to send: "+messageWrapper.getEnvelopedMessage());
+        	}
+            // 5 - Tenta enviar
             String response = (String) ci.sendMessageWithResponse(this, messageWrapper);
+            // debug da resposta
+        	if(DeveloperSettings.SHOW_MESSAGE_CONTENT){
+        		System.out.println("Content of response: "+response);
+        	}
             // se não conseguir tenta por outro
             HashMap<String, String> contents = processEnvelope(response);
             messageWrapper.setServiceProcessingTime(Long.parseLong(contents.get("processingTime")));
@@ -1128,10 +1135,8 @@ public class CommunicationManager extends ComponentManager {
         /*
          * Se quem está enviando não foi explicitado, então, por padrão, são preenxidos os dados do envio da aplicação.
          */
-        if (message.getOrigin() == null) {
-            message.setOrigin(new Address());
-            message.getOrigin().setLayer(Address.LAYER_APPLICATION);
-            message.getOrigin().setUid(getDeviceManager().getBackendService().getApplicationUID());
+        if (message.getOrigin() == null && message.getSubject() != Message.SUBJECT_REGISTRATION) {
+        	message.setOrigin(this.getDefaultPersonalAddress());
         }
         MessageWrapper messageWrapper = new MessageWrapper(message);
         messageWrapper.setTimeout(timeout);
@@ -1981,6 +1986,8 @@ public class CommunicationManager extends ComponentManager {
                     this.newInternalEvent(EVENT_MESSAGE_DELIVERED, mw, mw.getMessage().getTarget(), currentCommunicationInterface, uploadService.getInstance().getModelId());
                     // Política de Armazenamento
                     this.storagePolice(mw, server);
+                    // limpar mensagem construída
+                    mw.cleanEnvelopedMessage();
                     // confirmação do funcionamento sem erros
                     ci.setStatus(CommunicationInterface.STATUS_CONNECTED);
                     // this.newInternalEvent(EVENT_SERVICE_FUNCTIONS_END, CommunicationDAO.UPLOAD_MESSAGING_POLICY, uploadServer);
@@ -2175,5 +2182,13 @@ public class CommunicationManager extends ComponentManager {
     public List<CommunicationInterface> getCommunicationInterfaces() {
         return communicationInterfaces;
     }
-
+    
+    public Address getDefaultPersonalAddress() {
+    	if(defaultPersonalAddress==null){
+            defaultPersonalAddress = new Address();
+            defaultPersonalAddress.setLayer(Address.LAYER_APPLICATION);
+            defaultPersonalAddress.setUid(getDeviceManager().getBackendService().getApplicationUID());
+    	}
+		return defaultPersonalAddress;
+	}
 }

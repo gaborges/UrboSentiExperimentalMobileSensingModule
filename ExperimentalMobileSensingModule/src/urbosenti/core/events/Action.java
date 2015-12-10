@@ -139,4 +139,11 @@ public class Action implements Serializable {
         this.feedbackAnswer = feedbackAnswer;
         componentManager.getEventManager().notifyAll();
     }
+    
+    public static void clearAction(Action action) {
+        if (action.getParameters() != null) {
+            action.getParameters().clear();
+        }
+        action = null;
+    }
 }

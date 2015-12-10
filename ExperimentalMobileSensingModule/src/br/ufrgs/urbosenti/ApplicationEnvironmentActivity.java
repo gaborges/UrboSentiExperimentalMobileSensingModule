@@ -35,6 +35,8 @@ public class ApplicationEnvironmentActivity extends Activity {
 	private Button btnDeleteExperimentalFiles;
 	private TextView txtServiceStatus;
 	private Button btnStopService;
+	private Button btnStartInteractionExperiment;
+	private Button btnStartListenInterations;
 
 	public static final int BACK = 1;
 
@@ -49,6 +51,8 @@ public class ApplicationEnvironmentActivity extends Activity {
 		btnStartService = (Button) findViewById(R.id.btnStartService);
 		btnStartServiceWithoutAdaptation = (Button) findViewById(R.id.btnStartServiceWithoutAdaptation);
 		btnStartEventsExperiment = (Button) findViewById(R.id.btnStartEventsExperiment);
+		btnStartInteractionExperiment = (Button) findViewById(R.id.btnStartInterationExperiment);
+		btnStartListenInterations = (Button) findViewById(R.id.btnStartListenInterations);
 		btnDeleteDatabase = (Button) findViewById(R.id.btnDeleteDatabase);
 		btnDeleteExperimentalFiles = (Button) findViewById(R.id.btnDeleteExperimentalFiles);
 		txtServiceStatus = (TextView) findViewById(R.id.txtServiceStatus);
@@ -75,6 +79,7 @@ public class ApplicationEnvironmentActivity extends Activity {
 				// # experimento 1 (Aplicação) - (0) porta; (1) Experimento; (2)
 				// tempo de parada(s); (3) intervalo entre uploads
 				String args[] = { "55666", "1", "172800000", "10000", "yes" }; // 48h
+				//String args[] = { "55666", "1", "43200000", "10000", "yes" }; // 12h
 				// String args[] = {"55666","1","300","10000"}; // 300 ms
 				// String args[] = {"55666","1","720000","10000","yes"}; // 1h
 				// String args[] = {"55666","1","60000","10000","yes"}; // 15
@@ -191,6 +196,56 @@ public class ApplicationEnvironmentActivity extends Activity {
 				// desligar escutadores?
 				// String args[] =
 				// {"55666","3","2","20","50","1","experimento01","ipsAddresses.in","yes"};
+				if (!isMyServiceRunning(UrboSentiService.class)) {
+					intent.putExtra("args", args);
+					startService(intent);
+					txtServiceStatus.setText(R.string.RunningServiceStatus);
+					Toast.makeText(getBaseContext(), "The experiment of events was started.", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(getBaseContext(), "The service is already running.", Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+		// experimento de interação
+		btnStartInteractionExperiment.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// # Experimento 3 (Interações): (0) porta; (1) Experimento, (2)
+				// modo de operação 1 (Escutador)
+				// String args[] = {"55666","3","1"};
+				// # Experimento 3 (Interações): (0) porta; (1) Experimento, (2)
+				// modo de operação 2 (Envia mensagens)
+				// # (3) quantityOfEvents, (4) int quantityOfRules, (5)
+				// quantityOfConditions,
+				// # (6) nomeArquivoDeSaída; (7) arquivo de lista de ips; (8)
+				// desligar escutadores?
+				String args[] = {"55666","3","2","1000","0","0","Experiment01","ipsAddresses.in","yes"};
+				if (!isMyServiceRunning(UrboSentiService.class)) {
+					intent.putExtra("args", args);
+					startService(intent);
+					txtServiceStatus.setText(R.string.RunningServiceStatus);
+					Toast.makeText(getBaseContext(), "The experiment of events was started.", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(getBaseContext(), "The service is already running.", Toast.LENGTH_LONG).show();
+				}
+			}
+		});
+		// escutar interações
+		btnStartListenInterations.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// # Experimento 3 (Interações): (0) porta; (1) Experimento, (2)
+				// modo de operação 1 (Escutador)
+				String args[] = {"55666","3","1"};
+				// # Experimento 3 (Interações): (0) porta; (1) Experimento, (2)
+				// modo de operação 2 (Envia mensagens)
+				// # (3) quantityOfEvents, (4) int quantityOfRules, (5)
+				// quantityOfConditions,
+				// # (6) nomeArquivoDeSaída; (7) arquivo de lista de ips; (8)
+				// desligar escutadores?
+				// String args[] = {"55666","3","2","1000","0","0","experimento01","ipsAddresses.in","no"};
 				if (!isMyServiceRunning(UrboSentiService.class)) {
 					intent.putExtra("args", args);
 					startService(intent);
